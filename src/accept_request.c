@@ -112,23 +112,6 @@ static void main_layer_update_callback(Layer *me, GContext *ctx) {
   }
 }
 
-static void draw_letters(Layer *window_layer, GRect bounds) {
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - 65, 10}, .size = { 130, 20 } });
-  text_layer_set_text(text_layer, "Answer Requested");
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
-
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - 10 - 50, bounds.size.h/2 - 30}, .size = { 50, 20 } });
-  text_layer_set_text(text_layer, "Deny");
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
-
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 + 10 , bounds.size.h/2 - 30}, .size = { 50, 20 } });
-  text_layer_set_text(text_layer, "Accept");
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
-}
-
 static void window_load( Window * window ) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "INSIDE FILL REQUEST\n" );
 
@@ -138,8 +121,6 @@ static void window_load( Window * window ) {
   main_layer = layer_create(bounds);
   layer_set_update_proc(main_layer, main_layer_update_callback);
   layer_add_child(window_layer, main_layer);
-
-  draw_letters(window_layer, bounds);
 
   int halfWidth = bounds.size.w/2;
   int halfHeight = bounds.size.h/2;
