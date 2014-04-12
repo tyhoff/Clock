@@ -6,11 +6,11 @@
   - uint8_t room_id
   - uint8_t sender_id
   - uint8_t recipient_id
-  ANSWER_REQUEST
+  ANSWER_REQUEST (0)
     - uint8_t question_number
-  ANSWER_REQUEST_ACCEPTED
+  ANSWER_REQUEST_ACCEPTED (1)
     - uint8_t request_id
-  ANSWER_BROADCAST
+  ANSWER_BROADCAST (2)
     - uint8_t question_number
     - char    answer
 
