@@ -9,12 +9,8 @@
     "watchface": false
   },
   "appKeys": {
-    "room_id": 0,
-    "uuid": 1,
-    "sender_id": 2,
-    "recipient_id": 3,
-    "question_number": 4,
-    "answer": 5
+    "request_id": 0,
+    "question_number": 1
   },
   "resources": {
     "media": []

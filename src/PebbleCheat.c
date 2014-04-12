@@ -1,11 +1,16 @@
-#include <pebble.h>
+#include "common.h"
 
-static Window *window;
-static TextLayer *text_layer;
+static Window * window;
+static TextLayer * text_layer;
 static uint8_t answer_request_accepted = 0;
-static Tuple last_answer_request;
+static uint8_t answer_request_pending = 0;
+static uint16_t question_requested = 0;
+static uint32_t question_request_id = 0;
 
-static void out_sent_handler(DictionaryIterator *sent, void *context) {
+static void trigger_answer_request_notifier(void);
+
+static void out_sent_handler( DictionaryIterator *sent, 
+                              void *context ) {
   // outgoing message was delivered
 }
 
@@ -18,19 +23,23 @@ static void out_failed_handler( DictionaryIterator * failed,
 static void in_received_handler( DictionaryIterator * received, 
                                  void * context ) {
   // incoming message received
-  uint8_t capacity = 100;
-  uint8_t buffer[capacity];
-  Tuple * tuple = dict_read_begin_from_buffer( received,
-                                               buffer,
-                                               sizeof(buffer) );
-  while ( tuple ){
-    switch (tuple->key) {
-      case REQUEST_ID:
-        memcpy( &last_answer_request, tuple, sizeof(Tuple) );
-        trigger_answer_request_notifier();
-        break;
+  Tuple * request_id_tuple = dict_find( received, REQUEST_ID );
+  Tuple * question_number_tuple = dict_find( received, QUESTION_NUMBER );
+
+
+
+  if ( request_id_tuple ){
+    question_request_id = ( request_id_tuple->value->uint32 );
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "got request_id %lu\n", question_request_id );
+    trigger_answer_request_notifier();
+  }
+  if ( question_number_tuple ){
+    if ( answer_request_accepted == 1 ){
+      // this is part of an ANSWER_REQUEST
+      question_requested = ( question_number_tuple->value->uint32 );
+    } else {
+      // this is part of an ANSWER_BROADCAST
     }
-    tuple = dict_read_next(&iter);
   }
 }
 
@@ -39,41 +48,32 @@ static void in_dropped_handler( AppMessageResult reason, void * context ) {
 }
 
 static void trigger_answer_request_notifier(){
-  ; // TODO tyler, draw something
-  ; // then set 5 second timeout, if it expires, make the alert dissappear
+  // TODO tyler, draw something
+  // then set 5 second timeout, if it expires, make the alert dissappear
+  // and unset answer_request_pending
+  answer_request_pending = 1;
 }
 
 static void accel_tap_handler( AccelAxisType axis, int32_t direction ) {
   // Process tap on ACCEL_AXIS_X, ACCEL_AXIS_Y or ACCEL_AXIS_Z
   // Direction is 1 or -1
-  answer_request_accepted = 1;
+  //
+  if ( answer_request_accepted == 0 ){
+    answer_request_accepted = 1;
 
+    DictionaryIterator *iter;
+    app_message_outbox_begin(&iter);
+    if ( iter == NULL ){
+      return;
+    }
+    //Tuplet accepted = TupletInteger( REQUEST_ID,  question_request_id );
+    dict_write_uint32( iter,
+                     REQUEST_ID,
+                     question_request_id );
+    app_message_outbox_send();
 
-  /*
-  Tuplet message[] = {
-    TupletInteger( UUID, (uint8_t) gen_uuid() ),
-    TupletInteger( ROOM_ID, (uint8_t) room_id ),
-    TupletInteger( SENDER_ID, (uint8_t) my_id ),
-    TupletInteger( RECIPIENT_ID, (uint8_t) last_answer_request->data ),
-    TupletInteger( REQUEST_ID, (uint8_t) recipient_id ),
+    fill_request_init( question_requested );
   }
-  */
-  DictionaryIterator *iter;
-  app_message_outbox_begin(&iter);
-  if ( iter == NULL ){
-    return;
-  }
-  /*
-  dict_serialize_tuplets_to_buffer( message,
-                                    ARRAY_LENGTH( message ),
-                                    buffer,
-                                    &size );
-  */
-  Tuplet accepted = TupletInteger( request_id, 1 );
-  dict_write_tuplet(iter, &value);
-  app_message_outbox_send();
-
-  ; // TODO render the fill_request window
 }
 
 static void handle_init(void) {
@@ -130,6 +130,8 @@ static void init(void) {
   const uint32_t outbound_size = 64;
   app_message_open(inbound_size, outbound_size);
 
+  handle_init();
+
   window = window_create();
   window_set_click_config_provider(window, click_config_provider);
   window_set_window_handlers(window, (WindowHandlers) {
@@ -141,6 +143,7 @@ static void init(void) {
 }
 
 static void deinit(void) {
+  handle_deinit();
   window_destroy(window);
 }
 
