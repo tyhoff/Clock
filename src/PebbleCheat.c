@@ -54,9 +54,9 @@ static void trigger_answer_request_notifier(uint8_t question_request){
 }
 
 static void accel_tap_handler( AccelAxisType axis, int32_t direction ) {
-  // // Process tap on ACCEL_AXIS_X, ACCEL_AXIS_Y or ACCEL_AXIS_Z
-  // // Direction is 1 or -1
-  
+  // Process tap on ACCEL_AXIS_X, ACCEL_AXIS_Y or ACCEL_AXIS_Z
+  // Direction is 1 or -1
+  //
   // if ( answer_request_accepted == 0 ){
   //   answer_request_accepted = 1;
 
@@ -73,6 +73,14 @@ static void accel_tap_handler( AccelAxisType axis, int32_t direction ) {
 
   //   fill_request_init( question_requested );
   // }
+}
+
+static void handle_init(void) {
+  accel_tap_service_subscribe(&accel_tap_handler);
+}
+
+static void handle_deinit(void) {
+  accel_tap_service_unsubscribe();
 }
 
 static void select_click_handler( ClickRecognizerRef recognizer,
@@ -92,14 +100,6 @@ static void click_config_provider(void *context) {
   window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
   window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
   window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
-}
-
-static void window_disappear(Window *window) {
-  accel_tap_service_unsubscribe();
-}
-
-static void window_appear(Window *window) {
-  accel_tap_service_subscribe(&accel_tap_handler);
 }
 
 static void window_load(Window *window) {
@@ -129,19 +129,20 @@ static void init(void) {
   const uint32_t outbound_size = 64;
   app_message_open(inbound_size, outbound_size);
 
+  handle_init();
+
   window = window_create();
   window_set_click_config_provider(window, click_config_provider);
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
     .unload = window_unload,
-    .disappear = window_disappear,
-    .appear = window_appear
   });
   const bool animated = true;
   window_stack_push(window, animated);
 }
 
 static void deinit(void) {
+  handle_deinit();
   window_destroy(window);
 }
 
