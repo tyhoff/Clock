@@ -237,6 +237,6 @@ static void deinit(void) {
   accel_data_service_unsubscribe();
 }
 
-void fill_request_init( uint8_t question_requested ){
+void send_request_init( uint8_t question_requested ){
   init();
 }
