@@ -187,6 +187,12 @@ static void window_load( Window * window ) {
 
   draw_letters(window_layer, bounds);
 
+  text_layer = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { 20, 20 } });
+  text_layer_set_text(text_layer, itoa(question_number));
+  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
+  layer_add_child(window_layer, text_layer_get_layer(text_layer));
+
+
   int halfWidth = bounds.size.w/2;
   int halfHeight = bounds.size.h/2;
 

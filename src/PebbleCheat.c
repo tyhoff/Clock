@@ -22,6 +22,8 @@ static void out_failed_handler( DictionaryIterator * failed,
 
 static void in_received_handler( DictionaryIterator * received, 
                                  void * context ) {
+
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Pebble has recieved a message\n");
   // incoming message received
   Tuple * request_id_tuple = dict_find( received, REQUEST_ID );
   Tuple * question_number_tuple = dict_find( received, QUESTION_NUMBER );

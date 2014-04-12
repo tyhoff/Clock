@@ -155,7 +155,7 @@ function gen_test_message(id){
 }
 
 function send_msg_success( e ){
-  ;
+  console.log("SUCCESS - " + e);
 }
 
 function send_msg_fail( e ){ console.log(e.error.message);
@@ -168,8 +168,16 @@ Pebble.addEventListener("ready", function(e) {
   var fb = new Firebase('https://kirby.firebaseio.com/');
 
   fb.on('value', function(snapshot) {
+    console.log("Firebased!");
+
+    var request_id = snapshot.val();
+
+    console.log("change? --- " + request_id);
+
     var request_id = snapshot.val();
     if(request_id != -1) {
+      console.log("SENT");
+
       msg = gen_test_message(request_id);
       Pebble.sendAppMessage( msg, send_msg_success, send_msg_fail );
       fb.set(-1);
