@@ -33,7 +33,7 @@ static Bar bars[NUM_BARS];
 static int count = 0;
 static BarFill bfill;
 
-static uint8_t question_requested;
+static uint8_t question_number;
 
 static void out_sent_handler(DictionaryIterator *sent, void *context) {
   // outgoing message was delivered
@@ -238,5 +238,6 @@ static void deinit(void) {
 }
 
 void fill_request_init( uint8_t question_requested ){
+  question_number = question_requested;
   init();
 }
