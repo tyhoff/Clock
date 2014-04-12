@@ -1,4 +1,3 @@
-#include <pebble.h>
 #include "common.h"
 
 #define NUM_BARS 4
@@ -31,13 +30,37 @@ static Layer *main_layer;
 static TextLayer *text_layer;
 static AppTimer *timer;
 static Bar bars[NUM_BARS];
+static uint8_t question_ticker = 1;
 static BarFill bfill;
 
 // globals
 extern int32_t question_number;
 extern int32_t answer;
 
+static void decrementTicker(uint8_t amount) {
+  if (question_ticker - amount < 1) {
+    question_ticker = 1;
+  } else {
+    question_ticker -= amount;
+  }
+}
+
+static void incrementTicker(uint8_t amount) {
+
+  uint8_t max = 0;
+  max = max - 1;
+
+
+  if (question_ticker + amount > 255) {
+    question_ticker = 255;
+  } else {
+    question_ticker += amount;
+  }
+}
+
 static void timer_callback(void *data) { 
+  static int lastDirection = -1;
+  static int timeHold = 0;
 
   AccelData accel = (AccelData) { .x = 0, .y = 0, .z = 0 };
 
@@ -65,16 +88,64 @@ static void timer_callback(void *data) {
         bfill.x -= INCREASE_RATE;
         bfill.y = 0;
       }
+      timeHold = 0;
     } else {
 
       // up 
       if (accel.y >= 0) {
-        bfill.y += INCREASE_RATE;
+        if (lastDirection == TOP) {
+          timeHold += 1;
+        } else {
+          timeHold = 0;
+        }
+
+        // after 3 seconds, increment by 5's
+        if (timeHold >= 120) {
+          bfill.y = 50;
+          if (timeHold % 10 == 0) {
+            incrementTicker(10);
+          }
+        } else if (timeHold >= 60) {
+          bfill.y = 30;
+          if (timeHold % 10 == 0) {
+            incrementTicker(5);
+          }
+        } else {
+          bfill.y = 10;
+          if (timeHold %10 == 0) {
+            incrementTicker(1);
+          }
+        }
+        lastDirection = TOP;
         bfill.x = 0;
 
         //down
       } else {
-        bfill.y -= INCREASE_RATE;
+        if (lastDirection == BOTTOM) {
+          timeHold += 1;
+        } else {
+          timeHold = 0;
+        }
+
+        // after 3 seconds, increment by 5's
+        if (timeHold >= 120) {
+          bfill.y = -50;
+          if (timeHold % 10 == 0) {
+            decrementTicker(10);
+          }
+        } else if (timeHold >= 60) {
+          bfill.y = -30;
+          if (timeHold % 10 == 0) {
+            decrementTicker(5);
+          }
+        } else {
+          bfill.y = -10;
+          if (timeHold %10 == 0) {
+            decrementTicker(1);
+          }
+        }
+
+        lastDirection = BOTTOM;
         bfill.x = 0;
       }
     }
@@ -85,6 +156,8 @@ static void timer_callback(void *data) {
   //compute where the next progress and direction should be
 
   layer_mark_dirty(main_layer);
+
+  text_layer_set_text(text_layer, itoa(question_ticker));
 
   timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
 }
@@ -135,23 +208,23 @@ static void main_layer_update_callback(Layer *me, GContext *ctx) {
 }
 
 static void draw_letters(Layer *window_layer, GRect bounds) {
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - BAR_HALF_WIDTH, 0}, .size = { 20, 20 } });
-  text_layer_set_text(text_layer, "A");
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - 65, 10}, .size = { 130, 20 } });
+  text_layer_set_text(text_layer, "Send Request");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
-  text_layer = text_layer_create((GRect) { .origin = { 0, bounds.size.h/2 - BAR_HALF_WIDTH}, .size = { 20, 20 } });
-  text_layer_set_text(text_layer, "B");
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - 10 - 50, bounds.size.h/2 - 30}, .size = { 50, 20 } });
+  text_layer_set_text(text_layer, "Cancel");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - BAR_HALF_WIDTH, bounds.size.h - 20}, .size = { 20, 20 } });
-  text_layer_set_text(text_layer, "C");
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 + 10 , bounds.size.h/2 - 30}, .size = { 50, 20 } });
+  text_layer_set_text(text_layer, "Accept");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w - 20, bounds.size.h/2 - BAR_HALF_WIDTH}, .size = { 20, 20 } });
-  text_layer_set_text(text_layer, "D");
+  text_layer = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { 20, 20 } });
+  text_layer_set_text(text_layer, itoa(question_ticker));
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 }
@@ -168,11 +241,6 @@ static void window_load( Window * window ) {
 
   draw_letters(window_layer, bounds);
 
-  text_layer = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { 20, 20 } });
-  text_layer_set_text(text_layer, itoa(question_number));
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
-
   int halfWidth = bounds.size.w/2;
   int halfHeight = bounds.size.h/2;
 
@@ -181,33 +249,26 @@ static void window_load( Window * window ) {
   bars[2].rect = GRect(halfWidth-BAR_HALF_WIDTH , halfHeight + BAR_HALF_WIDTH - 1, BAR_WIDTH , BAR_PX_LENGTH);
   bars[3].rect = GRect(halfWidth - BAR_HALF_WIDTH - BAR_PX_LENGTH + 1, halfHeight-BAR_HALF_WIDTH , BAR_PX_LENGTH , BAR_WIDTH);
 
-  timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
-}
+  question_ticker = 1;
 
-static void deinit() {
-  window_destroy(window);
-  accel_data_service_unsubscribe();
+  accel_data_service_subscribe(0, NULL);
+
+  timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL); 
 }
 
 static void window_unload( Window * window ) {
-  deinit();
+  question_ticker = 1;
+
+  accel_data_service_unsubscribe();
   text_layer_destroy( text_layer );
   layer_destroy(main_layer);
 }
 
 static void init(void) {
+  /* message handling init */
+  const uint32_t inbound_size = 64;
+  const uint32_t outbound_size = 64;
 
-  /* #<{(| register message handlers  |)}># */
-  /* app_message_register_inbox_received(in_received_handler); */
-  /* app_message_register_inbox_dropped(in_dropped_handler); */
-  /* app_message_register_outbox_sent(out_sent_handler); */
-  /* app_message_register_outbox_failed(out_failed_handler); */
-  /*  */
-  /* #<{(| message handling init |)}># */
-  /* const uint32_t inbound_size = 64; */
-  /* const uint32_t outbound_size = 64; */
-  /* app_message_open(inbound_size, outbound_size); */
-  /*  */
   window = window_create();
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
@@ -218,11 +279,8 @@ static void init(void) {
 
   bfill.x = 0;
   bfill.y = 0;
-
-  accel_data_service_subscribe(0, NULL);
-
 }
 
-void fill_request_init(){
+void send_request_init() {
   init();
 }
