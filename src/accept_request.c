@@ -2,7 +2,7 @@
 
 #define NUM_BARS 2
 #define INCREASE_RATE 2
-#define ACCEL_STEP_MS 50
+#define ACCEL_STEP_MS 100
 #define BAR_PX_LENGTH 50
 #define PADDING 20
 #define BAR_HALF_WIDTH 10
@@ -24,6 +24,8 @@ typedef struct barfill {
   int y;
 } BarFill;
 
+static void deinit(void);
+
 
 static Window *window;
 static Layer *main_layer;
@@ -33,7 +35,7 @@ static Bar bars[NUM_BARS];
 static int count = 0;
 static BarFill bfill;
 
-static uint8_t question_requested;
+static uint8_t question_number;
 
 static void timer_callback(void *data) { 
   static int lastDirection = -1;
@@ -65,6 +67,13 @@ static void timer_callback(void *data) {
         bfill.y = 0;
       }
     }
+  }
+
+  if (bfill.x >= 50) {
+    fill_request_init(question_number);
+  } else  if (bfill.x <= -50) {
+    window_destroy(window);
+    return;
   }
 
   /* APP_LOG(APP_LOG_LEVEL_DEBUG, "x: %d y: %d", accel.x, accel.y); */
@@ -141,6 +150,8 @@ static void window_load( Window * window ) {
   //left
   bars[1].rect = GRect(halfWidth - BAR_HALF_WIDTH - BAR_PX_LENGTH + 1, halfHeight-BAR_HALF_WIDTH , BAR_PX_LENGTH , BAR_WIDTH);
 
+  // accel_data_service_subscribe(0, NULL);
+
   timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
   
 }
@@ -148,6 +159,8 @@ static void window_load( Window * window ) {
 static void window_unload( Window * window ) {
   // text_layer_destroy( text_layer );
   layer_destroy(main_layer);
+  // accel_data_service_unsubscribe();
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "tyler deinit: %p", window);
 }
 
 static void init(void) {
@@ -161,16 +174,12 @@ static void init(void) {
   window_stack_push(window, animated);
 
   bfill.x = 0;
-
-  accel_data_service_subscribe(0, NULL);
-
 }
 
-static void deinit(void) {
-  window_destroy(window);
-  accel_data_service_unsubscribe();
-}
+// static void deinit(void) {
+// }
 
 void accept_request_init( uint8_t question_requested ){
+  question_number = question_requested;
   init();
 }

@@ -57,22 +57,22 @@ static void accel_tap_handler( AccelAxisType axis, int32_t direction ) {
   // Process tap on ACCEL_AXIS_X, ACCEL_AXIS_Y or ACCEL_AXIS_Z
   // Direction is 1 or -1
   //
-  if ( answer_request_accepted == 0 ){
-    answer_request_accepted = 1;
+  // if ( answer_request_accepted == 0 ){
+  //   answer_request_accepted = 1;
 
-    DictionaryIterator *iter;
-    app_message_outbox_begin(&iter);
-    if ( iter == NULL ){
-      return;
-    }
-    //Tuplet accepted = TupletInteger( REQUEST_ID,  question_request_id );
-    dict_write_uint32( iter,
-                     REQUEST_ID,
-                     question_request_id );
-    app_message_outbox_send();
+  //   DictionaryIterator *iter;
+  //   app_message_outbox_begin(&iter);
+  //   if ( iter == NULL ){
+  //     return;
+  //   }
+  //   //Tuplet accepted = TupletInteger( REQUEST_ID,  question_request_id );
+  //   dict_write_uint32( iter,
+  //                    REQUEST_ID,
+  //                    question_request_id );
+  //   app_message_outbox_send();
 
-    fill_request_init( question_requested );
-  }
+  //   fill_request_init( question_requested );
+  // }
 }
 
 static void handle_init(void) {
