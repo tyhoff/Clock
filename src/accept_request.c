@@ -71,11 +71,12 @@ static void timer_callback(void *data) {
 
   // accept threshold hit
   if (bfill.x >= 50) {
+    window_stack_pop(false);
     fill_request_init(question_number);
 
   //deny threshold hit
   } else  if (bfill.x <= -50) {
-    window_stack_pop(window);
+    window_stack_pop(true);
 
   // keep drawing, threshold not hit
   } else {
@@ -149,7 +150,7 @@ static void window_load( Window * window ) {
   int halfHeight = bounds.size.h/2;
 
   draw_letters(window_layer, bounds);
-  
+
   //right
   bars[0].rect = GRect(halfWidth + BAR_HALF_WIDTH -1 , halfHeight - BAR_HALF_WIDTH , BAR_PX_LENGTH , BAR_WIDTH);
   
