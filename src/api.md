@@ -2,7 +2,6 @@
 
 ## Message structure:
   These fields are present in every message
-  
       uint8_t uuid
       uint8_t room_id
       uint8_t sender_id

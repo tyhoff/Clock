@@ -1,9 +1,91 @@
-#include <pebble.h>
+#include "common.h"
 
-static Window *window;
-static TextLayer *text_layer;
+static Window * window;
+static TextLayer * text_layer;
+static uint8_t answer_request_accepted = 0;
+static uint8_t answer_request_pending = 0;
+static uint16_t question_requested = 0;
+static uint32_t question_request_id = 0;
 
-static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
+static void trigger_answer_request_notifier(void);
+
+static void out_sent_handler( DictionaryIterator *sent, 
+                              void *context ) {
+  // outgoing message was delivered
+}
+
+static void out_failed_handler( DictionaryIterator * failed,
+                                AppMessageResult reason,
+                                void * context ) {
+  // outgoing message failed
+}
+
+static void in_received_handler( DictionaryIterator * received, 
+                                 void * context ) {
+  // incoming message received
+  Tuple * request_id_tuple = dict_find( received, REQUEST_ID );
+  Tuple * question_number_tuple = dict_find( received, QUESTION_NUMBER );
+
+
+
+  if ( request_id_tuple ){
+    question_request_id = ( request_id_tuple->value->uint32 );
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "got request_id %lu\n", question_request_id );
+    trigger_answer_request_notifier();
+  }
+  if ( question_number_tuple ){
+    if ( answer_request_accepted == 1 ){
+      // this is part of an ANSWER_REQUEST
+      question_requested = ( question_number_tuple->value->uint32 );
+    } else {
+      // this is part of an ANSWER_BROADCAST
+    }
+  }
+}
+
+static void in_dropped_handler( AppMessageResult reason, void * context ) {
+  // incoming message dropped
+}
+
+static void trigger_answer_request_notifier(){
+  // TODO tyler, draw something
+  // then set 5 second timeout, if it expires, make the alert dissappear
+  // and unset answer_request_pending
+  answer_request_pending = 1;
+}
+
+static void accel_tap_handler( AccelAxisType axis, int32_t direction ) {
+  // Process tap on ACCEL_AXIS_X, ACCEL_AXIS_Y or ACCEL_AXIS_Z
+  // Direction is 1 or -1
+  //
+  if ( answer_request_accepted == 0 ){
+    answer_request_accepted = 1;
+
+    DictionaryIterator *iter;
+    app_message_outbox_begin(&iter);
+    if ( iter == NULL ){
+      return;
+    }
+    //Tuplet accepted = TupletInteger( REQUEST_ID,  question_request_id );
+    dict_write_uint32( iter,
+                     REQUEST_ID,
+                     question_request_id );
+    app_message_outbox_send();
+
+    fill_request_init( question_requested );
+  }
+}
+
+static void handle_init(void) {
+  accel_tap_service_subscribe(&accel_tap_handler);
+}
+
+static void handle_deinit(void) {
+  accel_tap_service_unsubscribe();
+}
+
+static void select_click_handler( ClickRecognizerRef recognizer,
+                                  void * context ) {
   text_layer_set_text(text_layer, "Select");
 }
 
@@ -36,6 +118,20 @@ static void window_unload(Window *window) {
 }
 
 static void init(void) {
+
+  /* register message handlers  */
+  app_message_register_inbox_received(in_received_handler);
+  app_message_register_inbox_dropped(in_dropped_handler);
+  app_message_register_outbox_sent(out_sent_handler);
+  app_message_register_outbox_failed(out_failed_handler);
+
+  /* message handling init */
+  const uint32_t inbound_size = 64;
+  const uint32_t outbound_size = 64;
+  app_message_open(inbound_size, outbound_size);
+
+  handle_init();
+
   window = window_create();
   window_set_click_config_provider(window, click_config_provider);
   window_set_window_handlers(window, (WindowHandlers) {
@@ -47,6 +143,7 @@ static void init(void) {
 }
 
 static void deinit(void) {
+  handle_deinit();
   window_destroy(window);
 }
 
