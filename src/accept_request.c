@@ -72,7 +72,7 @@ static void timer_callback(void *data) {
   if (bfill.x >= 50) {
     fill_request_init(question_number);
   } else  if (bfill.x <= -50) {
-    window_destroy(window);
+    window_stack_pop(window);
     return;
   }
 
