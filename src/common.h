@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include "helpers.h"
 
 enum {
   REQUEST_ID        = 0x0,
