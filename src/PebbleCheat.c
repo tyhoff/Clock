@@ -22,6 +22,8 @@ static void out_failed_handler( DictionaryIterator * failed,
 
 static void in_received_handler( DictionaryIterator * received, 
                                  void * context ) {
+
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Pebble has recieved a message\n");
   // incoming message received
   Tuple * request_id_tuple = dict_find( received, REQUEST_ID );
   Tuple * question_number_tuple = dict_find( received, QUESTION_NUMBER );
@@ -107,7 +109,7 @@ static void window_load(Window *window) {
   GRect bounds = layer_get_bounds(window_layer);
 
   text_layer = text_layer_create((GRect) { .origin = { 0, 72 }, .size = { bounds.size.w, 20 } });
-  text_layer_set_text(text_layer, "Press a button");
+  text_layer_set_text(text_layer, "This is a clock:)");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 }

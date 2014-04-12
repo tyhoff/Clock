@@ -33,7 +33,7 @@ static Bar bars[NUM_BARS];
 static int count = 0;
 static BarFill bfill;
 
-static uint8_t question_requested;
+static uint8_t question_number;
 
 static void out_sent_handler(DictionaryIterator *sent, void *context) {
   // outgoing message was delivered
@@ -187,6 +187,12 @@ static void window_load( Window * window ) {
 
   draw_letters(window_layer, bounds);
 
+  text_layer = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { 20, 20 } });
+  text_layer_set_text(text_layer, itoa(question_number));
+  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
+  layer_add_child(window_layer, text_layer_get_layer(text_layer));
+
+
   int halfWidth = bounds.size.w/2;
   int halfHeight = bounds.size.h/2;
 
@@ -237,6 +243,7 @@ static void deinit(void) {
   accel_data_service_unsubscribe();
 }
 
-void send_request_init( uint8_t question_requested ){
+void fill_request_init( uint8_t question_requested ){
+  question_number = question_requested;
   init();
 }
