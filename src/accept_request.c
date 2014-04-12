@@ -103,28 +103,6 @@ static void main_layer_update_callback(Layer *me, GContext *ctx) {
   }
 }
 
-static void draw_letters(Layer *window_layer, GRect bounds) {
-  // text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - BAR_HALF_WIDTH, 0}, .size = { 20, 20 } });
-  // text_layer_set_text(text_layer, "A");
-  // text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  // layer_add_child(window_layer, text_layer_get_layer(text_layer));
-
-  // text_layer = text_layer_create((GRect) { .origin = { 0, bounds.size.h/2 - BAR_HALF_WIDTH}, .size = { 20, 20 } });
-  // text_layer_set_text(text_layer, "B");
-  // text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  // layer_add_child(window_layer, text_layer_get_layer(text_layer));
-
-  // text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - BAR_HALF_WIDTH, bounds.size.h - 20}, .size = { 20, 20 } });
-  // text_layer_set_text(text_layer, "C");
-  // text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  // layer_add_child(window_layer, text_layer_get_layer(text_layer));
-
-  // text_layer = text_layer_create((GRect) { .origin = { bounds.size.w - 20, bounds.size.h/2 - BAR_HALF_WIDTH}, .size = { 20, 20 } });
-  // text_layer_set_text(text_layer, "D");
-  // text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  // layer_add_child(window_layer, text_layer_get_layer(text_layer));
-}
-
 static void window_load( Window * window ) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "INSIDE FILL REQUEST\n" );
 
@@ -134,8 +112,6 @@ static void window_load( Window * window ) {
   main_layer = layer_create(bounds);
   layer_set_update_proc(main_layer, main_layer_update_callback);
   layer_add_child(window_layer, main_layer);
-
-  draw_letters(window_layer, bounds);
 
   int halfWidth = bounds.size.w/2;
   int halfHeight = bounds.size.h/2;
