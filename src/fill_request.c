@@ -212,17 +212,17 @@ static void window_unload( Window * window ) {
 
 static void init(void) {
 
-  /* register message handlers  */
-  app_message_register_inbox_received(in_received_handler);
-  app_message_register_inbox_dropped(in_dropped_handler);
-  app_message_register_outbox_sent(out_sent_handler);
-  app_message_register_outbox_failed(out_failed_handler);
-
-  /* message handling init */
-  const uint32_t inbound_size = 64;
-  const uint32_t outbound_size = 64;
-  app_message_open(inbound_size, outbound_size);
-
+  /* #<{(| register message handlers  |)}># */
+  /* app_message_register_inbox_received(in_received_handler); */
+  /* app_message_register_inbox_dropped(in_dropped_handler); */
+  /* app_message_register_outbox_sent(out_sent_handler); */
+  /* app_message_register_outbox_failed(out_failed_handler); */
+  /*  */
+  /* #<{(| message handling init |)}># */
+  /* const uint32_t inbound_size = 64; */
+  /* const uint32_t outbound_size = 64; */
+  /* app_message_open(inbound_size, outbound_size); */
+  /*  */
   window = window_create();
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
