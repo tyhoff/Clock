@@ -6,4 +6,5 @@ enum {
 };
 
 void fill_request_init( uint8_t question_requested );
+void accept_request_init( uint8_t question_requested );
 

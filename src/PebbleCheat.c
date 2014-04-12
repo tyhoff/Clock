@@ -7,7 +7,7 @@ static uint8_t answer_request_pending = 0;
 static uint16_t question_requested = 0;
 static uint32_t question_request_id = 0;
 
-static void trigger_answer_request_notifier(void);
+static void trigger_answer_request_notifier(uint8_t question_request);
 
 static void out_sent_handler( DictionaryIterator *sent, 
                               void *context ) {
@@ -31,7 +31,7 @@ static void in_received_handler( DictionaryIterator * received,
   if ( request_id_tuple ){
     question_request_id = ( request_id_tuple->value->uint32 );
     APP_LOG(APP_LOG_LEVEL_DEBUG, "got request_id %lu\n", question_request_id );
-    trigger_answer_request_notifier();
+    trigger_answer_request_notifier(question_request_id);
   }
   if ( question_number_tuple ){
     if ( answer_request_accepted == 1 ){
@@ -47,10 +47,9 @@ static void in_dropped_handler( AppMessageResult reason, void * context ) {
   // incoming message dropped
 }
 
-static void trigger_answer_request_notifier(){
-  // TODO tyler, draw something
-  // then set 5 second timeout, if it expires, make the alert dissappear
-  // and unset answer_request_pending
+static void trigger_answer_request_notifier(uint8_t question_request){
+  accept_request_init(question_request);
+
   answer_request_pending = 1;
 }
 
