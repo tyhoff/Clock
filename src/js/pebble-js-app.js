@@ -1,7 +1,8 @@
 var last_request_forwarded = null;
+var last_request_accepted = null;
 
 function gen_test_message(){
-  return { "request_id": 342377 };
+  return { "question_number": 69 };
 }
 
 function send_msg_success( e ){
@@ -31,11 +32,11 @@ function handle_new_firebase_message( var msg ){
 
 Pebble.addEventListener("appmessage", function(e) {
   var msg = e.payload;
-  console.log(msg.request_id);
-  if ( msg.request_id ){
-    console.log(" this is a request_id message")
-    if ( last_request_forwarded === msg.request_id ){
-      // TODO firebase, send out the request accepted message
-    }
+  console.log( JSON.stringify(e.payload) );
+  if ( msg.question_number ){
+  } else if ( msg.answer ){
+  } else {
+    console.log("unknown message");
+    console.log(msg);
   }
 });

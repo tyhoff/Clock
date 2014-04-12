@@ -9,8 +9,8 @@
     "watchface": false
   },
   "appKeys": {
-    "request_id": 0,
-    "question_number": 1
+    "question_number":  0,
+    "answer":           1
   },
   "resources": {
     "media": []
