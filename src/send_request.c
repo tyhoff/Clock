@@ -36,6 +36,27 @@ static BarFill bfill;
 static uint8_t question_requested;
 
 
+static void decrementTicker(uint8_t amount) {
+  if (question_ticker - amount < 1) {
+    question_ticker = 1;
+  } else {
+    question_ticker -= amount;
+  }
+}
+
+static void incrementTicker(uint8_t amount) {
+
+  uint8_t max = 0;
+  max = max - 1;
+
+
+  if (question_ticker + amount > 255) {
+    question_ticker = 255;
+  } else {
+    question_ticker += amount;
+  }
+}
+
 static void timer_callback(void *data) { 
   static int lastDirection = -1;
   static int timeHold = 0;
@@ -81,17 +102,17 @@ static void timer_callback(void *data) {
         if (timeHold >= 120) {
           bfill.y = 50;
           if (timeHold % 10 == 0) {
-            question_ticker += 10;
+            incrementTicker(10);
           }
         } else if (timeHold >= 60) {
           bfill.y = 30;
           if (timeHold % 10 == 0) {
-            question_ticker += 5;
+            incrementTicker(5);
           }
         } else {
           bfill.y = 10;
           if (timeHold %10 == 0) {
-            question_ticker += 1;
+            incrementTicker(1);
           }
         }
         lastDirection = TOP;
@@ -109,17 +130,17 @@ static void timer_callback(void *data) {
         if (timeHold >= 120) {
           bfill.y = -50;
           if (timeHold % 10 == 0) {
-            question_ticker -= 10;
+            decrementTicker(10);
           }
         } else if (timeHold >= 60) {
           bfill.y = -30;
           if (timeHold % 10 == 0) {
-            question_ticker -= 5;
+            decrementTicker(5);
           }
         } else {
           bfill.y = -10;
           if (timeHold %10 == 0) {
-            question_ticker -= 1;
+            decrementTicker(1);
           }
         }
 
