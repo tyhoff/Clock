@@ -109,17 +109,17 @@ static void timer_callback(void *data) {
         if (timeHold >= 120) {
           bfill.y = -50;
           if (timeHold % 10 == 0) {
-            question_ticker += 10;
+            question_ticker -= 10;
           }
         } else if (timeHold >= 60) {
           bfill.y = -30;
           if (timeHold % 10 == 0) {
-            question_ticker += 5;
+            question_ticker -= 5;
           }
         } else {
           bfill.y = -10;
           if (timeHold %10 == 0) {
-            question_ticker += 1;
+            question_ticker -= 1;
           }
         }
 
@@ -187,7 +187,7 @@ static void main_layer_update_callback(Layer *me, GContext *ctx) {
 
 static void draw_letters(Layer *window_layer, GRect bounds) {
   text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - 65, 10}, .size = { 130, 20 } });
-  text_layer_set_text(text_layer, "Answer Requested");
+  text_layer_set_text(text_layer, "Send Request");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 

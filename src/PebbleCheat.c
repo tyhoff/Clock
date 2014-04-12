@@ -61,13 +61,6 @@ static void accel_tap_handler( AccelAxisType axis, int32_t direction ) {
   send_request_init();
 }
 
-static void handle_init(void) {
-  accel_tap_service_subscribe(&accel_tap_handler);
-}
-
-static void handle_deinit(void) {
-  accel_tap_service_unsubscribe();
-}
 
 static void select_click_handler( ClickRecognizerRef recognizer,
                                   void * context ) {
@@ -96,14 +89,23 @@ static void window_load(Window *window) {
   text_layer_set_text(text_layer, "This is a clock:)");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
+
+  
 }
 
 static void window_unload(Window *window) {
   text_layer_destroy(text_layer);
 }
 
-static void init(void) {
+static void window_appear(Window *window) {
+  accel_tap_service_subscribe(&accel_tap_handler);
+}
 
+static void window_disappear(Window *window) {
+  accel_tap_service_unsubscribe();
+}
+
+static void init(void) {
   /* register message handlers  */
   app_message_register_inbox_received(in_received_handler);
   app_message_register_inbox_dropped(in_dropped_handler);
@@ -115,20 +117,19 @@ static void init(void) {
   const uint32_t outbound_size = 64;
   app_message_open(inbound_size, outbound_size);
 
-  handle_init();
-
   window = window_create();
   window_set_click_config_provider(window, click_config_provider);
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
     .unload = window_unload,
+    .appear = window_appear,
+    .disappear = window_disappear
   });
   const bool animated = true;
   window_stack_push(window, animated);
 }
 
 static void deinit(void) {
-  handle_deinit();
   window_destroy(window);
 }
 
