@@ -1,0 +1,17 @@
+{
+  "uuid": "4cd492ca-2cd0-4d7c-8316-f1ec714db027",
+  "shortName": "PebbleCheat",
+  "longName": "PebbleCheat",
+  "companyName": "MakeAwesomeHappen",
+  "versionCode": 1,
+  "versionLabel": "1.0.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}
