@@ -2,7 +2,7 @@
 
 #define NUM_BARS 2
 #define INCREASE_RATE 2
-#define ACCEL_STEP_MS 100
+#define ACCEL_STEP_MS 50
 #define BAR_PX_LENGTH 50
 #define PADDING 20
 #define BAR_HALF_WIDTH 10
@@ -69,20 +69,25 @@ static void timer_callback(void *data) {
     }
   }
 
+  // accept threshold hit
   if (bfill.x >= 50) {
     fill_request_init(question_number);
+
+  //deny threshold hit
   } else  if (bfill.x <= -50) {
     window_stack_pop(window);
-    return;
+
+  // keep drawing, threshold not hit
+  } else {
+    layer_mark_dirty(main_layer);
+    timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
   }
 
   /* APP_LOG(APP_LOG_LEVEL_DEBUG, "x: %d y: %d", accel.x, accel.y); */
 
   //compute where the next progress and direction should be
 
-  layer_mark_dirty(main_layer);
-
-  timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
+ 
 }
 
 static void main_layer_update_callback(Layer *me, GContext *ctx) {
