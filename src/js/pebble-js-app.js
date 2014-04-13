@@ -169,7 +169,7 @@ Pebble.addEventListener("ready", function(e) {
 
   var roomId = localStorage.getItem('room-id');
 
-  var fb = new Firebase('https://kirby.firebaseio.com/rooms/' + roomId);
+  var fb = new Firebase('https://kirby2.firebaseio.com/rooms/' + roomId);
 
   var first = true;
 

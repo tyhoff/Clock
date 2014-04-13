@@ -33,7 +33,6 @@ static void accel_tap_handler( AccelAxisType axis, int32_t direction ) {
 static void select_click_handler( ClickRecognizerRef recognizer,
                                   void * context ) {
   // maybe use this for answer summary later
-
 }
 
 static void click_config_provider(void *context) {

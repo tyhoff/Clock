@@ -29,21 +29,41 @@ typedef struct barfill {
 static Window *window;
 static Layer *main_layer;
 static TextLayer *text_layer;
+static TextLayer *ticker_layer;
+static TextLayer *notification_layer;
 static AppTimer *timer;
 static Bar bars[NUM_BARS];
 static BarFill bfill;
+
+static char question_num_text[10];
+
+static BitmapLayer* b_icon_layer;
+static GBitmap *b_icon;
+
+static BitmapLayer* d_icon_layer;
+static GBitmap *d_icon;
+
+static BitmapLayer* a_icon_layer;
+static GBitmap *a_icon;
+
+static BitmapLayer* c_icon_layer;
+static GBitmap *c_icon;
 
 // globals
 extern int32_t question_number;
 extern int32_t answer;
 
-static void send_response(char answer) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Request filled for Q: %u with answer %c", (int)question_number, (int)answer);
-  send_msg( question_number, (int32_t) answer );
+static void popView() {
+  window_stack_pop(false);
 }
 
-static void popView() {
-  window_stack_pop(true);
+static void send_response(char answer) {
+  text_layer_set_text(notification_layer, "Answer\nSent");
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(notification_layer)); 
+  app_timer_register(2000, popView, NULL);
+
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Request filled for Q: %u with answer %c", (int)question_number, (int)answer);
+  send_msg( question_number, (int32_t) answer );
 }
 
 static void timer_callback(void *data) { 
@@ -95,20 +115,12 @@ static void timer_callback(void *data) {
 
   if (bfill.x >= 50) {
     send_response('B');
-    text_layer_set_text(text_layer, "Request\nFilled");
-    app_timer_register(2000, popView, NULL);
   } else if (bfill.x <= -50) {
     send_response('D');
-    text_layer_set_text(text_layer, "Request\nFilled");
-    app_timer_register(2000, popView, NULL);
   } else if (bfill.y >= 50) {
     send_response('A');
-    text_layer_set_text(text_layer, "Request\nFilled");
-    app_timer_register(2000, popView, NULL);
   } else if (bfill.y <= -50) {
     send_response('C');
-    text_layer_set_text(text_layer, "Request\nFilled");
-    app_timer_register(2000, popView, NULL);
   } else {
     layer_mark_dirty(main_layer);
     timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
@@ -161,26 +173,6 @@ static void main_layer_update_callback(Layer *me, GContext *ctx) {
 }
 
 static void draw_letters(Layer *window_layer, GRect bounds) {
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - BAR_HALF_WIDTH, 0}, .size = { 20, 15 } });
-  text_layer_set_text(text_layer, "A");
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
-
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w - 13, bounds.size.h/2 - BAR_HALF_WIDTH}, .size = { 12, 15 } });
-  text_layer_set_text(text_layer, "B");
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
-
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - BAR_HALF_WIDTH, bounds.size.h - 17}, .size = { 20, 15 } });
-  text_layer_set_text(text_layer, "C");
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
-
-  text_layer = text_layer_create((GRect) { .origin = { 0, bounds.size.h/2 - BAR_HALF_WIDTH}, .size = { 12, 15 } });
-  text_layer_set_text(text_layer, "D");
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer)); 
-
   text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 +17, 0}, .size = { 50, 50 } });
   text_layer_set_text(text_layer, "Fill\nRequest");
   text_layer_set_text_alignment(text_layer, GTextAlignmentRight);
@@ -197,10 +189,13 @@ static void window_load( Window * window ) {
   layer_set_update_proc(main_layer, main_layer_update_callback);
   layer_add_child(window_layer, main_layer);
 
-  text_layer = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { 20, 20 } });
-  text_layer_set_text(text_layer, itoa(question_number));
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
+  ticker_layer = text_layer_create((GRect) { .origin = { 5, 0 }, .size = { 55, 20 } });
+  strncpy(question_num_text, "Q: ", 10);
+  strncat(question_num_text, itoa(question_number), 10);
+  text_layer_set_text(ticker_layer, question_num_text);
+  text_layer_set_text_alignment(ticker_layer, GTextAlignmentLeft);
+  text_layer_set_font(ticker_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  layer_add_child(window_layer, text_layer_get_layer(ticker_layer));
 
   draw_letters(window_layer, bounds);
 
@@ -212,10 +207,40 @@ static void window_load( Window * window ) {
   bars[2].rect = GRect(halfWidth-BAR_HALF_WIDTH , halfHeight + BAR_HALF_WIDTH - 1, BAR_WIDTH , BAR_PX_LENGTH);
   bars[3].rect = GRect(halfWidth - BAR_HALF_WIDTH - BAR_PX_LENGTH + 1, halfHeight-BAR_HALF_WIDTH , BAR_PX_LENGTH , BAR_WIDTH);
 
+  b_icon_layer = bitmap_layer_create(GRect(halfWidth + 43,halfHeight-6,12,12));
+  b_icon = gbitmap_create_with_resource(RESOURCE_ID_B_ICON);
+  bitmap_layer_set_bitmap(b_icon_layer, b_icon);
+  layer_add_child(window_layer, bitmap_layer_get_layer(b_icon_layer));
+
+  d_icon_layer = bitmap_layer_create(GRect(halfWidth - 55,halfHeight-6,12,12));
+  d_icon = gbitmap_create_with_resource(RESOURCE_ID_D_ICON);
+  bitmap_layer_set_bitmap(d_icon_layer, d_icon);
+  layer_add_child(window_layer, bitmap_layer_get_layer(d_icon_layer));
+
+  a_icon_layer = bitmap_layer_create(GRect(halfWidth - 6,halfHeight - 55,12,12));
+  a_icon = gbitmap_create_with_resource(RESOURCE_ID_A_ICON);
+  bitmap_layer_set_bitmap(a_icon_layer, a_icon);
+  layer_add_child(window_layer, bitmap_layer_get_layer(a_icon_layer));
+
+  c_icon_layer = bitmap_layer_create(GRect(halfWidth - 6,halfHeight + 43,12,12));
+  c_icon = gbitmap_create_with_resource(RESOURCE_ID_C_ICON);
+  bitmap_layer_set_bitmap(c_icon_layer, c_icon);
+  layer_add_child(window_layer, bitmap_layer_get_layer(c_icon_layer));
+
+  notification_layer = text_layer_create((GRect) { .origin = { 10, 20 }, .size = { 124, 60 } });
+  text_layer_set_background_color( notification_layer, GColorBlack );
+  text_layer_set_text_alignment(notification_layer, GTextAlignmentCenter);
+  text_layer_set_font(notification_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
+  text_layer_set_text_color( notification_layer, GColorWhite );
+
   timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
 }
 
 static void deinit() {
+  gbitmap_destroy(a_icon);
+  gbitmap_destroy(b_icon);
+  gbitmap_destroy(c_icon);
+  gbitmap_destroy(d_icon);
   window_destroy(window);
   accel_data_service_unsubscribe();
 }
@@ -223,6 +248,8 @@ static void deinit() {
 static void window_unload( Window * window ) {
   deinit();
   text_layer_destroy( text_layer );
+  text_layer_destroy(notification_layer);
+  text_layer_destroy(ticker_layer);
   layer_destroy(main_layer);
 }
 

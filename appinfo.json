@@ -34,8 +34,27 @@
         "type": "png",
         "name": "MINUS_ICON",
         "file": "images/minus.png"
+      },
+      {
+        "type": "png",
+        "name": "A_ICON",
+        "file": "images/a.png"
+      },
+      {
+        "type": "png",
+        "name": "B_ICON",
+        "file": "images/b.png"
+      },
+      {
+        "type": "png",
+        "name": "C_ICON",
+        "file": "images/c.png"
+      },
+      {
+        "type": "png",
+        "name": "D_ICON",
+        "file": "images/d.png"
       }
-
     ]
   }
 }

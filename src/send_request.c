@@ -305,8 +305,6 @@ static void window_load( Window * window ) {
   layer_add_child(window_layer, bitmap_layer_get_layer(minus_icon_layer));
 
   notification_layer = text_layer_create((GRect) { .origin = { 10, 20 }, .size = { 124, 60 } });
-  snprintf( question_num_text, 10, "Q: %d", question_ticker);
-  text_layer_set_text(notification_layer, question_num_text);
   text_layer_set_background_color( notification_layer, GColorBlack );
   text_layer_set_text_alignment(notification_layer, GTextAlignmentCenter);
   text_layer_set_font(notification_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
