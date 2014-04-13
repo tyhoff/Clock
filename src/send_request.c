@@ -264,11 +264,16 @@ static void window_unload( Window * window ) {
   layer_destroy(main_layer);
 }
 
+static void window_disappear( Window * window) {
+  app_timer_cancel(timer);
+}
+
 static void init(void) {
   window = window_create();
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
     .unload = window_unload,
+    .disappear = window_disappear
   });
   const bool animated = true;
   window_stack_push(window, animated);
