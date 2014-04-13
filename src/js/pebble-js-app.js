@@ -152,7 +152,7 @@ var last_request_forwarded = null;
 var last_request_accepted = null;
 
 function gen_test_message(id){
-  return { "request_id": id };
+  return { "question_number": id };
 }
 
 function send_msg_success( e ){

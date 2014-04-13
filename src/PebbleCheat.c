@@ -16,6 +16,7 @@ void trigger_answer_request_notifier(){
   // TODO tyler, draw something
   // then set 5 second timeout, if it expires, make the alert dissappear
   // and unset answer_request_pending
+  accept_request_init();
   answer_request_pending = 1;
 }
 
