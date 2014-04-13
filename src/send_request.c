@@ -72,6 +72,8 @@ static void timer_callback(void *data) {
     bfill.x = 0;
     bfill.y = 0;
 
+    timeHold = 0;
+
     //accept
   } else {
     if (abs(accel.x) >= abs(accel.y)) {
