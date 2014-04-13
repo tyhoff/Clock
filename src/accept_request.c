@@ -31,6 +31,14 @@ static AppTimer *timer;
 static Bar bars[NUM_BARS];
 static BarFill bfill;
 
+static char question_num_text[10];
+
+static BitmapLayer* check_icon_layer;
+static GBitmap *check_icon;
+
+static BitmapLayer* x_icon_layer;
+static GBitmap *x_icon;
+
 // globals
 extern int32_t question_number;
 extern int32_t answer;
@@ -116,19 +124,28 @@ static void main_layer_update_callback(Layer *me, GContext *ctx) {
 }
 
 static void draw_letters(Layer *window_layer, GRect bounds) {
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - 65, 10}, .size = { 130, 20 } });
-  text_layer_set_text(text_layer, "Answer Requested");
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - 65, 10}, .size = { 130, 50 } });
+  text_layer_set_text(text_layer, "Answer\nRequested");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
+  text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - 10 - 50, bounds.size.h/2 - 30}, .size = { 50, 20 } });
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - 65, 60}, .size = { 130, 50 } });
+  strncpy(question_num_text, "Q: ", 10);
+  strncat(question_num_text, itoa(question_number), 10);
+  text_layer_set_text(text_layer, "Q: ");
+  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
+  text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
+  layer_add_child(window_layer, text_layer_get_layer(text_layer));
+
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - 10 - 50, bounds.size.h/2 - 30 + 55}, .size = { 50, 20 } });
   text_layer_set_text(text_layer, "Deny");
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
+  text_layer_set_text_alignment(text_layer, GTextAlignmentLeft);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 + 10 , bounds.size.h/2 - 30}, .size = { 50, 20 } });
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 + 10 , bounds.size.h/2 - 30 + 55}, .size = { 50, 20 } });
   text_layer_set_text(text_layer, "Accept");
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
+  text_layer_set_text_alignment(text_layer, GTextAlignmentRight);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 }
 
@@ -149,10 +166,20 @@ static void window_load( Window * window ) {
   draw_letters(window_layer, bounds);
 
   //right
-  bars[0].rect = GRect(halfWidth + BAR_HALF_WIDTH -1 , halfHeight - BAR_HALF_WIDTH , BAR_PX_LENGTH , BAR_WIDTH);
+  bars[0].rect = GRect(halfWidth + BAR_HALF_WIDTH -1, halfHeight - BAR_HALF_WIDTH +55, BAR_PX_LENGTH , BAR_WIDTH);
   
   //left
-  bars[1].rect = GRect(halfWidth - BAR_HALF_WIDTH - BAR_PX_LENGTH + 1, halfHeight-BAR_HALF_WIDTH , BAR_PX_LENGTH , BAR_WIDTH);
+  bars[1].rect = GRect(halfWidth - BAR_HALF_WIDTH - BAR_PX_LENGTH + 1, halfHeight-BAR_HALF_WIDTH +55, BAR_PX_LENGTH , BAR_WIDTH);
+
+  check_icon_layer = bitmap_layer_create(GRect(halfWidth + 43,halfHeight-6 + 55,12,12));
+  check_icon = gbitmap_create_with_resource(RESOURCE_ID_CHECK_ICON);
+  bitmap_layer_set_bitmap(check_icon_layer, check_icon);
+  layer_add_child(window_layer, bitmap_layer_get_layer(check_icon_layer));
+
+  x_icon_layer = bitmap_layer_create(GRect(halfWidth - 55,halfHeight-6 + 55,12,12));
+  x_icon = gbitmap_create_with_resource(RESOURCE_ID_X_ICON);
+  bitmap_layer_set_bitmap(x_icon_layer, x_icon);
+  layer_add_child(window_layer, bitmap_layer_get_layer(x_icon_layer));
 
   accel_data_service_subscribe(0, NULL);
 
@@ -162,6 +189,8 @@ static void window_load( Window * window ) {
 
 static void window_unload( Window * window ) {
   // text_layer_destroy( text_layer );
+  gbitmap_destroy(check_icon);
+  gbitmap_destroy(x_icon);
   layer_destroy(main_layer);
   accel_data_service_unsubscribe();
   APP_LOG(APP_LOG_LEVEL_DEBUG, "tyler deinit: %p", window);
