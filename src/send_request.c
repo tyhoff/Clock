@@ -97,25 +97,27 @@ static void timer_callback(void *data) {
           timeHold += 1;
         } else {
           timeHold = 0;
+          lastDirection = TOP;
         }
 
         // after 3 seconds, increment by 5's
-        if (timeHold >= 120) {
+        if (timeHold >= 80) {
           bfill.y = 50;
           if (timeHold % 10 == 0) {
             incrementTicker(10);
           }
-        } else if (timeHold >= 60) {
-          bfill.y = 30;
+        } else if (timeHold >= 40) {
+          bfill.y = 34;
           if (timeHold % 10 == 0) {
             incrementTicker(5);
           }
         } else {
-          bfill.y = 10;
+          bfill.y = 17;
           if (timeHold %10 == 0) {
             incrementTicker(1);
           }
         }
+
         lastDirection = TOP;
         bfill.x = 0;
 
@@ -124,22 +126,23 @@ static void timer_callback(void *data) {
         if (lastDirection == BOTTOM) {
           timeHold += 1;
         } else {
+          lastDirection = BOTTOM;
           timeHold = 0;
         }
 
         // after 3 seconds, increment by 5's
-        if (timeHold >= 120) {
+        if (timeHold >= 80) {
           bfill.y = -50;
           if (timeHold % 10 == 0) {
             decrementTicker(10);
           }
-        } else if (timeHold >= 60) {
-          bfill.y = -30;
+        } else if (timeHold >= 40) {
+          bfill.y = -34;
           if (timeHold % 10 == 0) {
             decrementTicker(5);
           }
         } else {
-          bfill.y = -10;
+          bfill.y = -17;
           if (timeHold %10 == 0) {
             decrementTicker(1);
           }
@@ -151,15 +154,17 @@ static void timer_callback(void *data) {
     }
   }
 
-  /* APP_LOG(APP_LOG_LEVEL_DEBUG, "x: %d y: %d", accel.x, accel.y); */
+  if (bfill.x >= 50) {
+    //send a request
+  } else if (bfill.x <= -50) {
+    window_stack_pop(true);
+  } else {
+    layer_mark_dirty(main_layer);
+    text_layer_set_text(text_layer, itoa(question_ticker));
+    timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);  
+  }
 
-  //compute where the next progress and direction should be
-
-  layer_mark_dirty(main_layer);
-
-  text_layer_set_text(text_layer, itoa(question_ticker));
-
-  timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
+  
 }
 
 static void main_layer_update_callback(Layer *me, GContext *ctx) {
