@@ -175,11 +175,10 @@ Pebble.addEventListener("ready", function(e) {
 
     console.log(snapshot);
 
-    var request_id = snapshot.val();
+    var room = snapshot.val();
 
-    console.log("change? --- " + request_id);
+    console.log("change? --- " + room);
 
-    var request_id = snapshot.val();
     if(request_id != -1) {
       console.log("SENT");
 
