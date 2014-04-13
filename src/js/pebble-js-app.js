@@ -165,7 +165,7 @@ function send_msg_fail( e ){ console.log(e.error.message);
 Pebble.addEventListener("ready", function(e) {
   var roomId = localStorage.getItem('room-id');
 
-  console.log("Ready - " roomId);
+  console.log("Ready - " + roomId);
 
   var fb = new Firebase('https://kirby.firebaseio.com/rooms/' + roomId);
 
@@ -185,7 +185,7 @@ Pebble.addEventListener("ready", function(e) {
 
 Pebble.addEventListener("appmessage", function(e) {
   var roomId = localStorage.getItem('room-id');
-  console.log("AppMessage - " roomId);
+  console.log("AppMessage - " + roomId);
   var fb = new Firebase('https://kirby.firebaseio.com/rooms/' + roomId );
   var msg = e.payload;
 
