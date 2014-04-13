@@ -37,6 +37,10 @@ static BarFill bfill;
 extern int32_t question_number;
 extern int32_t answer;
 
+static void send_response(char answer) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Request filled for Q: %d with answer %c", question_number, answer);
+}
+
 static void timer_callback(void *data) { 
 
   AccelData accel = (AccelData) { .x = 0, .y = 0, .z = 0 };
@@ -135,25 +139,30 @@ static void main_layer_update_callback(Layer *me, GContext *ctx) {
 }
 
 static void draw_letters(Layer *window_layer, GRect bounds) {
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - BAR_HALF_WIDTH, 0}, .size = { 20, 20 } });
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 +17, 0}, .size = { 50, 50 } });
+  text_layer_set_text(text_layer, "Fill\nRequest");
+  text_layer_set_text_alignment(text_layer, GTextAlignmentRight);
+  layer_add_child(window_layer, text_layer_get_layer(text_layer));
+
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - BAR_HALF_WIDTH, 0}, .size = { 20, 15 } });
   text_layer_set_text(text_layer, "A");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
-  text_layer = text_layer_create((GRect) { .origin = { 0, bounds.size.h/2 - BAR_HALF_WIDTH}, .size = { 20, 20 } });
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w - 13, bounds.size.h/2 - BAR_HALF_WIDTH}, .size = { 12, 15 } });
   text_layer_set_text(text_layer, "B");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - BAR_HALF_WIDTH, bounds.size.h - 20}, .size = { 20, 20 } });
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - BAR_HALF_WIDTH, bounds.size.h - 17}, .size = { 20, 15 } });
   text_layer_set_text(text_layer, "C");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w - 20, bounds.size.h/2 - BAR_HALF_WIDTH}, .size = { 20, 20 } });
+  text_layer = text_layer_create((GRect) { .origin = { 0, bounds.size.h/2 - BAR_HALF_WIDTH}, .size = { 12, 15 } });
   text_layer_set_text(text_layer, "D");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
+  layer_add_child(window_layer, text_layer_get_layer(text_layer)); 
 }
 
 static void window_load( Window * window ) {
@@ -183,6 +192,8 @@ static void window_load( Window * window ) {
 
   timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
 }
+
+Q: 11
 
 static void deinit() {
   window_destroy(window);
