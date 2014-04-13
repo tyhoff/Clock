@@ -31,8 +31,8 @@ static void window_load( Window * window ) {
   layer_add_child(window_layer, text_layer_get_layer( text_layer ));
 
   text_answer = text_layer_create((GRect) { .origin = { 0, 50 }, .size = { bounds.size.w, 50 } });
-  // snprintf( answer_text, 30, "%c", (char) answer );
-  snprintf( answer_text, 30, "B" );
+  snprintf( answer_text, 30, "%c", (char) answer );
+  // snprintf( answer_text, 30, "B" );
   text_layer_set_text( text_answer, answer_text );
   text_layer_set_background_color( text_answer, GColorBlack );
   text_layer_set_font(text_answer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
@@ -41,9 +41,9 @@ static void window_load( Window * window ) {
   layer_add_child(window_layer, text_layer_get_layer( text_answer ));
 
   text_question = text_layer_create((GRect) { .origin = { 0, 110 }, .size = { bounds.size.w, 40 } });
-  // snprintf( answer_text, 30, "Q: %ld", question_number );
-  snprintf( question_text, 30, "Q: 37" );
-  text_layer_set_text( text_question, "Q: 37" );
+  snprintf( question_text, 30, "Q: %ld", question_number );
+  // snprintf( question_text, 30, "Q: 37" );
+  text_layer_set_text( text_question, question_text );
   text_layer_set_background_color( text_question, GColorBlack );
   text_layer_set_font(text_question, fonts_get_system_font(FONT_KEY_GOTHIC_28));
   text_layer_set_text_alignment( text_question, GTextAlignmentCenter );
