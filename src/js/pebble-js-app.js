@@ -208,11 +208,13 @@ Pebble.addEventListener("appmessage", function(e) {
 });
 
 Pebble.addEventListener("showConfiguration", function (e) {
-  Pebble.openURL("https://www.cs.purdue.edu/homes/kkohlmor/cheat.html");
+  var local = localStorage.getItem('room-id');
+  var url = "https://www.cs.purdue.edu/homes/kkohlmor/cheat.html?room-id=" + local;
+  Pebble.openURL(url);
 });
 
 Pebble.addEventListener("webviewclosed", function (e) {
-  console.log(e.response);
+  console.log("The room is " + e.response);
 
   if (!e.response) return;
   var roomId = e.response;
