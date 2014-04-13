@@ -37,6 +37,11 @@ static BarFill bfill;
 extern int32_t question_number;
 extern int32_t answer;
 
+static void send_response(char answer) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Request filled for Q: %u with answer %c", (int)question_number, (int)answer);
+
+}
+
 static void timer_callback(void *data) { 
 
   AccelData accel = (AccelData) { .x = 0, .y = 0, .z = 0 };
@@ -60,10 +65,12 @@ static void timer_callback(void *data) {
         bfill.x += INCREASE_RATE;
         bfill.y = 0;
 
+
         //left 
       } else {
         bfill.x -= INCREASE_RATE;
         bfill.y = 0;
+ 
       }
     } else {
 
@@ -72,21 +79,40 @@ static void timer_callback(void *data) {
         bfill.y += INCREASE_RATE;
         bfill.x = 0;
 
+
         //down
       } else {
         bfill.y -= INCREASE_RATE;
         bfill.x = 0;
+
       }
     }
   }
 
-  /* APP_LOG(APP_LOG_LEVEL_DEBUG, "x: %d y: %d", accel.x, accel.y); */
-
-  //compute where the next progress and direction should be
-
-  layer_mark_dirty(main_layer);
-
-  timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
+  if (bfill.x >= 50) {
+    send_response('B');
+    text_layer_set_text(text_layer, "Request\nFilled");
+    psleep(1000);
+    window_stack_pop(true);
+  } else if (bfill.x <= -50) {
+    send_response('D');
+    text_layer_set_text(text_layer, "Request\nFilled");
+    psleep(1000);
+    window_stack_pop(true);
+  } else if (bfill.y >= 50) {
+    send_response('A');
+    text_layer_set_text(text_layer, "Request\nFilled");
+    psleep(1000);
+    window_stack_pop(true);
+  } else if (bfill.y <= -50) {
+    send_response('C');
+    text_layer_set_text(text_layer, "Request\nFilled");
+    psleep(1000);
+    window_stack_pop(true);
+  } else {
+    layer_mark_dirty(main_layer);
+    timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
+  }  
 }
 
 static void main_layer_update_callback(Layer *me, GContext *ctx) {
@@ -135,24 +161,29 @@ static void main_layer_update_callback(Layer *me, GContext *ctx) {
 }
 
 static void draw_letters(Layer *window_layer, GRect bounds) {
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - BAR_HALF_WIDTH, 0}, .size = { 20, 20 } });
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - BAR_HALF_WIDTH, 0}, .size = { 20, 15 } });
   text_layer_set_text(text_layer, "A");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
-  text_layer = text_layer_create((GRect) { .origin = { 0, bounds.size.h/2 - BAR_HALF_WIDTH}, .size = { 20, 20 } });
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w - 13, bounds.size.h/2 - BAR_HALF_WIDTH}, .size = { 12, 15 } });
   text_layer_set_text(text_layer, "B");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - BAR_HALF_WIDTH, bounds.size.h - 20}, .size = { 20, 20 } });
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - BAR_HALF_WIDTH, bounds.size.h - 17}, .size = { 20, 15 } });
   text_layer_set_text(text_layer, "C");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w - 20, bounds.size.h/2 - BAR_HALF_WIDTH}, .size = { 20, 20 } });
+  text_layer = text_layer_create((GRect) { .origin = { 0, bounds.size.h/2 - BAR_HALF_WIDTH}, .size = { 12, 15 } });
   text_layer_set_text(text_layer, "D");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
+  layer_add_child(window_layer, text_layer_get_layer(text_layer)); 
+
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 +17, 0}, .size = { 50, 50 } });
+  text_layer_set_text(text_layer, "Fill\nRequest");
+  text_layer_set_text_alignment(text_layer, GTextAlignmentRight);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 }
 
@@ -166,12 +197,12 @@ static void window_load( Window * window ) {
   layer_set_update_proc(main_layer, main_layer_update_callback);
   layer_add_child(window_layer, main_layer);
 
-  draw_letters(window_layer, bounds);
-
   text_layer = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { 20, 20 } });
   text_layer_set_text(text_layer, itoa(question_number));
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
+
+  draw_letters(window_layer, bounds);
 
   int halfWidth = bounds.size.w/2;
   int halfHeight = bounds.size.h/2;
