@@ -3,6 +3,7 @@
   "shortName": "PebbleCheat",
   "longName": "PebbleCheat",
   "companyName": "MakeAwesomeHappen",
+  "capabilities": [ "configurable" ],
   "versionCode": 1,
   "versionLabel": "1.0.0",
   "watchapp": {

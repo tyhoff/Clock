@@ -205,3 +205,16 @@ Pebble.addEventListener("appmessage", function(e) {
     }
   }
 });
+
+Pebble.addEventListener("showConfiguration", function (e) {
+  Pebble.openURL("https://www.cs.purdue.edu/homes/kkohlmor/cheat.html");
+});
+
+Pebble.addEventListener("webviewclosed", function (e) {
+  console.log(e.response);
+
+  if (!e.response) return;
+  var roomId = e.response;
+
+  localStorage.setItem('room-id', roomId);
+});
