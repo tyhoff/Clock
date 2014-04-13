@@ -163,6 +163,8 @@ static void timer_callback(void *data) {
 
   if (bfill.x >= 50) {
     text_layer_set_text(text_layer, "Request\nSent");
+    question_number = question_ticker;
+    send_msg( question_number, -1);
     app_timer_register(2000, popView, NULL);
   } else if (bfill.x <= -50) {
     text_layer_set_text(text_layer, "Request\nVoided");

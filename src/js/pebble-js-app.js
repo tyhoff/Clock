@@ -150,10 +150,9 @@ H.ServerValue={TIMESTAMP:{".sv":"timestamp"}};H.INTERNAL=Z;H.Context=Y;})();
 
 var last_request_forwarded = null;
 var last_request_accepted = null;
-current_question = null;
 
-function gen_test_message(id){
-  return { "question_number": id };
+function gen_message(question_number, answer){
+  return { "question_number": question_number, "answer": answer };
 }
 
 function send_msg_success( e ){
@@ -171,16 +170,13 @@ Pebble.addEventListener("ready", function(e) {
 
   var fb = new Firebase('https://kirby.firebaseio.com/rooms/' + roomId);
 
-  var first = true;
+  var first = true; // so we don't get one unless it's new
 
   fb.endAt().limit(1).on('child_added', function(snapshot) {
     console.log("Firebased!");
     if(!first) {
-      current_question = snapshot.name();
-      var answers = snapshot.val();
-      console.log(answers.question_number);
-
-      msg = gen_test_message(answers.question_number);
+      var data = snapshot.val();
+      msg = gen_message(data.question_number, data.answer);
       Pebble.sendAppMessage( msg, send_msg_success, send_msg_fail );
     } else {
       first = false;
@@ -193,18 +189,18 @@ Pebble.addEventListener("appmessage", function(e) {
   console.log("APP MESSAGE!!!!");
 
   var roomId = localStorage.getItem('room-id');
-  var fb = new Firebase('https://kirby.firebaseio.com/rooms/' + roomId + '/' + current_question);
+  var fb = new Firebase('https://kirby.firebaseio.com/rooms/' + roomId );
   var msg = e.payload;
 
-  if ( msg.question_number ){
-    fb.update(msg);
-    console.log("TITTS" + e.payload.question_number);
-  } else if ( msg.answer ){
+  var new_msg = {'question_number': 0, 'answer': 0};
 
-  } else {
-    console.log("unknown message");
-    console.log(msg);
+  if ( typeof msg.question_number !== undefined ){
+    new_msg.question_number = msg.question_number;
   }
+  if ( msg.answer && typeof msg.answer !== undefined ){
+    new_msg.answer = msg.answer;
+  }
+  fb.push( new_msg );
 
 });
 
