@@ -1,5 +1,4 @@
 #include "common.h"
-#include "mini-printf.h"
 
 
 static Window *window;
