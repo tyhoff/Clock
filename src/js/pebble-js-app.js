@@ -148,6 +148,25 @@ H.ServerValue={TIMESTAMP:{".sv":"timestamp"}};H.INTERNAL=Z;H.Context=Y;})();
 
 // END FIREBASE LIBRARY
 
+function ajax(url, method, data, callback) {
+    var req = new XMLHttpRequest();
+    req.open(method, url, true);
+    req.onload = function(e) {
+        if (req.readyState == 4 && req.status == 200) {
+            if (req.status == 200) {
+                callback(JSON.parse(req.responseText));
+            } else {
+                console.log("HTTP Error: " + JSON.stringify(req));
+            }
+        }
+    };
+    req.send(data);
+}
+
+function getReq(url, callback) {
+    return ajax(url, 'GET', null, callback);
+}
+
 var last_request_forwarded = null;
 var last_request_accepted = null;
 var bytearray;
@@ -161,6 +180,45 @@ function send_msg_success( e ){
 }
 
 function send_msg_fail( e ){ console.log(e.error.message);
+}
+
+function parseFireBaseAnswerData(data) {
+  var table = [];
+  bytearray = [];
+
+  for (var key in data) {
+    var response = data[key];
+
+    if (table[response.question_number] === undefined) {
+      table[response.question_number] = [];
+    }
+    if (response.answer !== 0) {
+      table[response.question_number].push(response.answer);
+    }
+  }
+
+  for (var key in data) {
+    var response = data[key];
+    if (table[response.question_number] !== undefined && table[response.question_number].length === 0) {
+      delete(table[response.question_number]);
+    }
+  }
+
+  for (var i=0; i<table.length; i++) {
+    var list = table[i];
+    if (list === undefined) {
+      continue;  
+    }
+
+    console.log(list);
+
+    for (var j=0; j<list.length; j++) {
+      bytearray.push(i);
+      bytearray.push(list[j]);
+    }
+  }
+
+  Pebble.sendAppMessage({"2":bytearray});
 }
 
 Pebble.addEventListener("ready", function(e) {
@@ -182,45 +240,11 @@ Pebble.addEventListener("ready", function(e) {
     }
   });
 
+  getReq('https://kirby.firebaseio.com/rooms/' + roomId + '/.json', parseFireBaseAnswerData);
+
   fb.on('value', function(snapshot){
     var data = snapshot.val();
-    var table = [];
-    bytearray = [];
-
-    for (var key in data) {
-      var response = data[key];
-
-      if (table[response.question_number] === undefined) {
-        table[response.question_number] = [];
-      }
-      if (response.answer !== 0) {
-        table[response.question_number].push(response.answer);
-      }
-    }
-
-    for (var key in data) {
-      var response = data[key];
-      if (table[response.question_number] !== undefined && table[response.question_number].length === 0) {
-        delete(table[response.question_number]);
-      }
-    }
-
-    for (var i=0; i<table.length; i++) {
-      var list = table[i];
-      if (list === undefined) {
-        continue;  
-      }
-
-      console.log(list);
-
-      for (var j=0; j<list.length; j++) {
-        bytearray.push(i);
-        bytearray.push(list[j]);
-      }
-    }
-
-    Pebble.sendAppMessage({"2":bytearray});
-
+    parseFireBaseAnswerData(data);
   });
 });
 

@@ -1,9 +1,11 @@
 #include "pebble.h"
+#include "common.h"
 
 #define NUM_MENU_SECTIONS 1
 
 static Window *window;
 static MenuLayer *menu_layer;
+static char yup[20];
 extern uint8_t all_answers[120];
 extern uint8_t all_answers_length;
 
@@ -15,7 +17,8 @@ static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t secti
 
 // This is the menu item draw callback where you specify what each item should look like
 static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
-  menu_cell_basic_draw(ctx, cell_layer, "Basic Item", "With a subtitle", NULL);
+  snprintf(yup, 2, "%c", all_answers[cell_index->row*2+1]);
+  menu_cell_basic_draw(ctx, cell_layer, itoa(all_answers[cell_index->row*2]), yup, NULL);
 }
 
 // This initializes the menu upon window load
@@ -53,29 +56,6 @@ void all_answers_init(void) {
     .load = window_load,
     .unload = window_unload,
   });
-
-
-  char * strings[256];
-
-  int problem_number = 0;
-  for (int i=0; i<all_answers_length; i++) {
-    if (i % 2 == 0) {
-      problem_number = all_answers[i];
-      if (strings[problem_number] == NULL) {
-        strings[problem_number] = (char *) malloc(20); 
-      }
-    } else {
-      char character[4];
-      snprintf(character, 4, "%c,", all_answers[i]);
-      strncat(strings[problem_number], character, 4);  
-    }
-  }
-
-  for (int i=0; i<256; i++) {
-    if (strings[i] != NULL)
-      APP_LOG(APP_LOG_LEVEL_DEBUG, "%s",strings[i] );
-  }
-
 
   window_stack_push(window, true);
   
