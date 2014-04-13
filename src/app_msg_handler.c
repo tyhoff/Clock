@@ -3,10 +3,13 @@ static char *translate_error(AppMessageResult result);
 
 extern int32_t question_number;
 extern int32_t answer;
+extern uint8_t all_answers[120];
+extern uint8_t all_answers_length;
 
 enum {
   QUESTION_NUMBER   = 0x0,
   ANSWER            = 0x1,
+  ALL_ANSWERS       = 0x2
 };
 
 static void out_sent_handler( DictionaryIterator *sent, 
@@ -28,6 +31,17 @@ static void in_received_handler( DictionaryIterator * received,
                                  void * context ) {
   // incoming message received
   APP_LOG(APP_LOG_LEVEL_DEBUG, "MESSAGE RECIEVED\n" );
+
+  Tuple * all_answers_tuple = dict_find( received, ALL_ANSWERS );
+  if (all_answers_tuple != NULL) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "MY ARRAY! len: %d\n", all_answers_tuple->length );
+    memcpy(all_answers, all_answers_tuple->value->data, all_answers_tuple->length);
+    all_answers_length = all_answers_tuple->length;
+    return;
+  }
+
+
+
   Tuple * question_number_tuple = dict_find( received, QUESTION_NUMBER );
   Tuple * answer_tuple          = dict_find( received, ANSWER );
   int32_t new_question = 0;

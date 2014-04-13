@@ -13,6 +13,8 @@ static char clock_time[20];
 // non statics
 int32_t question_number = 0;
 int32_t answer = 0;
+uint8_t all_answers[120];
+uint8_t all_answers_length;
 
 
 void trigger_answer_request_notifier(){
@@ -42,7 +44,8 @@ static void accel_tap_handler( AccelAxisType axis, int32_t direction ) {
 static void select_click_handler( ClickRecognizerRef recognizer,
                                   void * context ) {
   // maybe use this for answer summary later
-  accept_request_init();
+  all_answers_init();
+
 }
 
 static void click_config_provider(void *context) {

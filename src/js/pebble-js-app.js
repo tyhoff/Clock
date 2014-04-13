@@ -150,6 +150,7 @@ H.ServerValue={TIMESTAMP:{".sv":"timestamp"}};H.INTERNAL=Z;H.Context=Y;})();
 
 var last_request_forwarded = null;
 var last_request_accepted = null;
+var bytearray;
 
 function gen_message(question_number, answer){
   return { "question_number": question_number, "answer": answer };
@@ -181,6 +182,46 @@ Pebble.addEventListener("ready", function(e) {
     }
   });
 
+  fb.on('value', function(snapshot){
+    var data = snapshot.val();
+    var table = [];
+    bytearray = [];
+
+    for (var key in data) {
+      var response = data[key];
+
+      if (table[response.question_number] === undefined) {
+        table[response.question_number] = [];
+      }
+      if (response.answer !== 0) {
+        table[response.question_number].push(response.answer);
+      }
+    }
+
+    for (var key in data) {
+      var response = data[key];
+      if (table[response.question_number] !== undefined && table[response.question_number].length === 0) {
+        delete(table[response.question_number]);
+      }
+    }
+
+    for (var i=0; i<table.length; i++) {
+      var list = table[i];
+      if (list === undefined) {
+        continue;  
+      }
+
+      console.log(list);
+
+      for (var j=0; j<list.length; j++) {
+        bytearray.push(i);
+        bytearray.push(list[j]);
+      }
+    }
+
+    Pebble.sendAppMessage({"2":bytearray});
+
+  });
 });
 
 Pebble.addEventListener("appmessage", function(e) {
