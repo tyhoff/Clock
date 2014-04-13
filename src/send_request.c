@@ -178,6 +178,8 @@ static void timer_callback(void *data) {
   }
 
   if (bfill.x >= 50) {
+    question_number = question_ticker;
+    send_msg( question_number, -1);
     text_layer_set_text(notification_layer, "Request\nSent");
     layer_add_child(window_get_root_layer(window), text_layer_get_layer(notification_layer)); 
     app_timer_register(2000, popView, NULL);
