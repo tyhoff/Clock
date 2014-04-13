@@ -151,6 +151,8 @@ static void draw_letters(Layer *window_layer, GRect bounds) {
 
 
 static void window_load( Window * window ) {
+  vibes_short_pulse();
+  
   APP_LOG(APP_LOG_LEVEL_DEBUG, "INSIDE FILL REQUEST\n" );
 
   Layer *window_layer = window_get_root_layer(window);

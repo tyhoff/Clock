@@ -18,6 +18,8 @@ static void popView() {
 }
 
 static void window_load( Window * window ) {
+  vibes_short_pulse();
+
   Layer *window_layer = window_get_root_layer(window);
   window_set_background_color( window, GColorBlack );
   GRect bounds = layer_get_bounds(window_layer);
