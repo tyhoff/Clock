@@ -59,6 +59,10 @@ static void incrementTicker(uint8_t amount) {
   }
 }
 
+static void popView() {
+  window_stack_pop(true);
+}
+
 static void timer_callback(void *data) { 
   static int lastDirection = -1;
   static int timeHold = 0;
@@ -158,13 +162,11 @@ static void timer_callback(void *data) {
   }
 
   if (bfill.x >= 50) {
-    //send a request
-
-
-  } else if (bfill.x <= -50) {
     text_layer_set_text(text_layer, "Request\nSent");
-    psleep(1000);
-    window_stack_pop(true);
+    app_timer_register(2000, popView, NULL);
+  } else if (bfill.x <= -50) {
+    text_layer_set_text(text_layer, "Request\nVoided");
+    app_timer_register(2000, popView, NULL);
   } else {
     layer_mark_dirty(main_layer);
     text_layer_set_text(ticker_layer, itoa(question_ticker));
