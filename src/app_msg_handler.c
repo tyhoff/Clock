@@ -45,6 +45,7 @@ static void in_received_handler( DictionaryIterator * received,
     // this is a ANSWER_BROADCAST
     question_number = ( question_number_tuple->value->int32 );
     answer = (answer_tuple->value->int32);
+    receive_answer_init();
   }
   if ( new_question > 0 && new_answer <= 0 ){
     if ( question_number == new_question ){
@@ -64,6 +65,7 @@ static void in_received_handler( DictionaryIterator * received,
 
 static void in_dropped_handler( AppMessageResult reason, void * context ) {
   // incoming message dropped
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Dropped incoming message\n" );
 }
 
 void send_msg( int32_t question_number_value, int32_t answer_value){
