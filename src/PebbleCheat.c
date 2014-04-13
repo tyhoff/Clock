@@ -13,6 +13,7 @@ int32_t answer = 0;
 
 
 void trigger_answer_request_notifier(){
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Trigger_answer_request_notifier\n");
   // TODO tyler, draw something
   // then set 5 second timeout, if it expires, make the alert dissappear
   // and unset answer_request_pending
