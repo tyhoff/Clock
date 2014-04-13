@@ -166,7 +166,7 @@ Pebble.addEventListener("ready", function(e) {
   console.log(e.ready);
   console.log("Hello world! - Sent from your javascript application.");
 
-  var fb = new Firebase('https://kirby.firebaseio.com/');
+  var fb = new Firebase('https://sweltering-fire3874.firebaseio.com/');
 
   fb.on('value', function(snapshot) {
     console.log("Firebased!");

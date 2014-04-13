@@ -27,12 +27,16 @@ static void accel_tap_handler( AccelAxisType axis, int32_t direction ) {
   // Direction is 1 or -1
   // TRANSITION
   // tap will enter the send request screen
+  
+
   send_request_init();
 }
 
 static void select_click_handler( ClickRecognizerRef recognizer,
                                   void * context ) {
   // maybe use this for answer summary later
+
+  receive_answer_init();
 }
 
 static void click_config_provider(void *context) {
@@ -46,8 +50,6 @@ static void handle_minute_tick( struct tm *tick_time,
 }
 
 static void window_load( Window * window ) {
-  window_set_fullscreen(window, true);
-
   Layer *window_layer = window_get_root_layer( window );
   GRect bounds = layer_get_bounds( window_layer );
   window_set_background_color( window, GColorBlack );
@@ -80,6 +82,7 @@ static void init(void) {
   app_msg_init();
 
   window = window_create();
+  window_set_fullscreen(window, true);
   window_set_click_config_provider(window, click_config_provider);
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
