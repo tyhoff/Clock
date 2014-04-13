@@ -265,10 +265,6 @@ static void window_unload( Window * window ) {
 }
 
 static void init(void) {
-  /* message handling init */
-  const uint32_t inbound_size = 64;
-  const uint32_t outbound_size = 64;
-
   window = window_create();
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
