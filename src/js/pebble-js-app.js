@@ -168,36 +168,24 @@ Pebble.addEventListener("ready", function(e) {
 
   var roomId = localStorage.getItem('room-id');
 
-  var fb = new Firebase('https://kirby.firebaseio.com/room/' + roomId);
+  var fb = new Firebase('https://kirby.firebaseio.com/rooms/' + roomId);
 
-  fb.on('value', function(snapshot) {
+  var first = true;
+
+  fb.endAt().limit(1).on('child_added', function(snapshot) {
     console.log("Firebased!");
+    if(!first) {
+      var answers = snapshot.val();
+      console.log(answers.question_number);
 
-    console.log(snapshot);
-
-    var room = snapshot.val();
-
-    console.log("change? --- " + room);
-
-    if(request_id != -1) {
-      console.log("SENT");
-
-      msg = gen_test_message(request_id);
+      msg = gen_test_message(answers.question_number);
       Pebble.sendAppMessage( msg, send_msg_success, send_msg_fail );
-      fb.set(-1);
+    } else {
+      first = false;
     }
   });
 
 });
-
-/*
-function handle_new_firebase_message( var msg ){
-  if ( msg.room_id === my_room_id ){
-    if ( msg.)
-
-  }
-}
-*/
 
 Pebble.addEventListener("appmessage", function(e) {
   var msg = e.payload;
@@ -212,7 +200,12 @@ Pebble.addEventListener("appmessage", function(e) {
 
 Pebble.addEventListener("showConfiguration", function (e) {
   var roomId = localStorage.getItem('room-id');
-  var url = "https://www.cs.purdue.edu/homes/kkohlmor/cheat.html?room-id=" + roomId;
+  var url = "";
+  if(roomId && roomId != "") {
+    url = "https://www.cs.purdue.edu/homes/kkohlmor/cheat.html?room-id=" + encodeURIComponent(roomId);
+  } else {
+    url = "https://www.cs.purdue.edu/homes/kkohlmor/cheat.html";
+  }
   Pebble.openURL(url);
 });
 
