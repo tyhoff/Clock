@@ -166,10 +166,14 @@ Pebble.addEventListener("ready", function(e) {
   console.log(e.ready);
   console.log("Hello world! - Sent from your javascript application.");
 
-  var fb = new Firebase('https://kirby.firebaseio.com/');
+  var roomId = localStorage.getItem('room-id');
+
+  var fb = new Firebase('https://kirby.firebaseio.com/room/' + roomId);
 
   fb.on('value', function(snapshot) {
     console.log("Firebased!");
+
+    console.log(snapshot);
 
     var request_id = snapshot.val();
 
@@ -208,8 +212,8 @@ Pebble.addEventListener("appmessage", function(e) {
 });
 
 Pebble.addEventListener("showConfiguration", function (e) {
-  var local = localStorage.getItem('room-id');
-  var url = "https://www.cs.purdue.edu/homes/kkohlmor/cheat.html?room-id=" + local;
+  var roomId = localStorage.getItem('room-id');
+  var url = "https://www.cs.purdue.edu/homes/kkohlmor/cheat.html?room-id=" + roomId;
   Pebble.openURL(url);
 });
 
