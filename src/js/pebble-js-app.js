@@ -150,6 +150,7 @@ H.ServerValue={TIMESTAMP:{".sv":"timestamp"}};H.INTERNAL=Z;H.Context=Y;})();
 
 var last_request_forwarded = null;
 var last_request_accepted = null;
+var last_sent_time = 0;
 
 function gen_message(question_number, answer){
   return { "question_number": question_number, "answer": answer };
@@ -163,6 +164,8 @@ function send_msg_fail( e ){ console.log(e.error.message);
 }
 
 Pebble.addEventListener("ready", function(e) {
+
+  console.log("Ready begin");
   var roomId = localStorage.getItem('room-id');
 
   console.log("Ready - " + roomId);
@@ -174,13 +177,17 @@ Pebble.addEventListener("ready", function(e) {
   fb.endAt().limit(1).on('child_added', function(snapshot) {
     if(!first) {
       var data = snapshot.val();
-      msg = gen_message(data.question_number, data.answer);
-      Pebble.sendAppMessage( msg, send_msg_success, send_msg_fail );
+      current_time = Date.now();
+      time_diff = current_time - last_sent_time;
+      if ( time_diff > 100 ){
+        msg = gen_message(data.question_number, data.answer);
+        Pebble.sendAppMessage( msg, send_msg_success, send_msg_fail );
+      }
     } else {
       first = false;
     }
   });
-
+  console.log("Ready end");
 });
 
 Pebble.addEventListener("appmessage", function(e) {
@@ -197,8 +204,8 @@ Pebble.addEventListener("appmessage", function(e) {
   if ( msg.answer && typeof msg.answer !== undefined ){
     new_msg.answer = msg.answer;
   }
+  last_sent_time = Date.now();
   fb.push( new_msg );
-
 });
 
 Pebble.addEventListener("showConfiguration", function (e) {
