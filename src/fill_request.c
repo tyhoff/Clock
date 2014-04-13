@@ -39,7 +39,7 @@ extern int32_t answer;
 
 static void send_response(char answer) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Request filled for Q: %u with answer %c", (int)question_number, (int)answer);
-
+  send_msg( question_number, (int32_t) answer );
 }
 
 static void popView() {
