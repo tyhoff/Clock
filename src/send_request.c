@@ -34,6 +34,13 @@ static Bar bars[NUM_BARS];
 static uint8_t question_ticker = 1;
 static BarFill bfill;
 
+static BitmapLayer* check_icon_layer;
+static GBitmap *check_icon;
+
+static BitmapLayer* x_icon_layer;
+static GBitmap *x_icon;
+
+
 // globals
 extern int32_t question_number;
 extern int32_t answer;
@@ -263,6 +270,16 @@ static void window_load( Window * window ) {
   bars[2].rect = GRect(halfWidth-BAR_HALF_WIDTH , halfHeight + BAR_HALF_WIDTH - 1, BAR_WIDTH , BAR_PX_LENGTH);
   bars[3].rect = GRect(halfWidth - BAR_HALF_WIDTH - BAR_PX_LENGTH + 1, halfHeight-BAR_HALF_WIDTH , BAR_PX_LENGTH , BAR_WIDTH);
 
+  check_icon_layer = bitmap_layer_create(GRect(halfWidth + 43,halfHeight-6,12,12));
+  check_icon = gbitmap_create_with_resource(RESOURCE_ID_CHECK_ICON);
+  bitmap_layer_set_bitmap(check_icon_layer, check_icon);
+  layer_add_child(window_layer, bitmap_layer_get_layer(check_icon_layer));
+
+  x_icon_layer = bitmap_layer_create(GRect(halfWidth - 55,halfHeight-6,12,12));
+  x_icon = gbitmap_create_with_resource(RESOURCE_ID_X_ICON);
+  bitmap_layer_set_bitmap(x_icon_layer, x_icon);
+  layer_add_child(window_layer, bitmap_layer_get_layer(x_icon_layer));
+
   question_ticker = 1;
 
   accel_data_service_subscribe(0, NULL);
@@ -272,8 +289,9 @@ static void window_load( Window * window ) {
 
 static void window_unload( Window * window ) {
   question_ticker = 1;
-
   accel_data_service_unsubscribe();
+
+  gbitmap_destroy(x_icon);
   text_layer_destroy( text_layer );
   text_layer_destroy( ticker_layer );
   layer_destroy(main_layer);
