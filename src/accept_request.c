@@ -154,7 +154,7 @@ static void window_load( Window * window ) {
   //left
   bars[1].rect = GRect(halfWidth - BAR_HALF_WIDTH - BAR_PX_LENGTH + 1, halfHeight-BAR_HALF_WIDTH , BAR_PX_LENGTH , BAR_WIDTH);
 
-  // accel_data_service_subscribe(0, NULL);
+  accel_data_service_subscribe(0, NULL);
 
   timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
   
@@ -163,7 +163,7 @@ static void window_load( Window * window ) {
 static void window_unload( Window * window ) {
   // text_layer_destroy( text_layer );
   layer_destroy(main_layer);
-  // accel_data_service_unsubscribe();
+  accel_data_service_unsubscribe();
   APP_LOG(APP_LOG_LEVEL_DEBUG, "tyler deinit: %p", window);
 }
 
