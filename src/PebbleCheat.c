@@ -46,6 +46,8 @@ static void handle_minute_tick( struct tm *tick_time,
 }
 
 static void window_load( Window * window ) {
+  window_set_fullscreen(window, true);
+
   Layer *window_layer = window_get_root_layer( window );
   GRect bounds = layer_get_bounds( window_layer );
   window_set_background_color( window, GColorBlack );
