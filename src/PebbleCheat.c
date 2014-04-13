@@ -4,6 +4,9 @@
 
 static Window * window;
 static TextLayer * text_layer;
+static AppTimer *timer;
+
+static bool canTriggerTap = false;
 
 static char clock_time[20];
 
@@ -22,12 +25,18 @@ void trigger_answer_pending_notifier(){
   // accepted your request and is answering it.
 }
 
+static void listenForTaps() {
+  canTriggerTap = true;
+}
+
 static void accel_tap_handler( AccelAxisType axis, int32_t direction ) {
   // Process tap on ACCEL_AXIS_X, ACCEL_AXIS_Y or ACCEL_AXIS_Z
   // Direction is 1 or -1
   // TRANSITION
   // tap will enter the send request screen
-  send_request_init();
+  if (canTriggerTap) {
+   send_request_init(); 
+  }
 }
 
 static void select_click_handler( ClickRecognizerRef recognizer,
@@ -61,6 +70,8 @@ static void window_load( Window * window ) {
   text_layer_set_text_color( text_layer, GColorWhite );
 
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
+
+  timer = app_timer_register(1000, listenForTaps, NULL);
 }
 
 static void window_unload( Window * window ) {

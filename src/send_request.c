@@ -254,7 +254,7 @@ static void draw_letters(Layer *window_layer, GRect bounds) {
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
   text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 +17, 0}, .size = { 50, 50 } });
-  text_layer_set_text(text_layer, "Send\nRequest");
+  text_layer_set_text(text_layer, "Request\nAnswer");
   text_layer_set_text_alignment(text_layer, GTextAlignmentRight);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 

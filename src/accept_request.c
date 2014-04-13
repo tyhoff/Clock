@@ -133,7 +133,7 @@ static void draw_letters(Layer *window_layer, GRect bounds) {
   text_layer = text_layer_create((GRect) { .origin = { bounds.size.w/2 - 65, 60}, .size = { 130, 50 } });
   strncpy(question_num_text, "Q: ", 10);
   strncat(question_num_text, itoa(question_number), 10);
-  text_layer_set_text(text_layer, "Q: ");
+  text_layer_set_text(text_layer, question_num_text);
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
