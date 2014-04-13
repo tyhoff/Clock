@@ -35,10 +35,11 @@ static Bar bars[NUM_BARS];
 static int count = 0;
 static BarFill bfill;
 
-static uint8_t question_number;
+// globals
+extern int32_t question_number;
+extern int32_t answer;
 
 static void timer_callback(void *data) { 
-  static int lastDirection = -1;
 
   AccelData accel = (AccelData) { .x = 0, .y = 0, .z = 0 };
 
@@ -72,7 +73,7 @@ static void timer_callback(void *data) {
   // accept threshold hit
   if (bfill.x >= 50) {
     window_stack_pop(false);
-    fill_request_init(question_number);
+    fill_request_init();
 
   //deny threshold hit
   } else  if (bfill.x <= -50) {
@@ -186,7 +187,6 @@ static void init(void) {
 // static void deinit(void) {
 // }
 
-void accept_request_init( uint8_t question_requested ){
-  question_number = question_requested;
+void accept_request_init(){
   init();
 }

@@ -1,3 +1,4 @@
+#include <pebble.h>
 #include "common.h"
 
 #define NUM_BARS 4
@@ -30,33 +31,13 @@ static Layer *main_layer;
 static TextLayer *text_layer;
 static AppTimer *timer;
 static Bar bars[NUM_BARS];
-static int count = 0;
 static BarFill bfill;
 
-static uint8_t question_number;
-
-static void out_sent_handler(DictionaryIterator *sent, void *context) {
-  // outgoing message was delivered
-}
-
-static void out_failed_handler( DictionaryIterator * failed,
-                                AppMessageResult reason,
-                                void * context ) {
-  // outgoing message failed
-}
-
-static void in_received_handler( DictionaryIterator * received, 
-                                 void * context ) {
-  // incoming message received
-}
-
-static void in_dropped_handler( AppMessageResult reason,
-                                void * context ) {
-  // incoming message dropped
-}
+// globals
+extern int32_t question_number;
+extern int32_t answer;
 
 static void timer_callback(void *data) { 
-  static int lastDirection = -1;
 
   AccelData accel = (AccelData) { .x = 0, .y = 0, .z = 0 };
 
@@ -192,7 +173,6 @@ static void window_load( Window * window ) {
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
-
   int halfWidth = bounds.size.w/2;
   int halfHeight = bounds.size.h/2;
 
@@ -202,10 +182,15 @@ static void window_load( Window * window ) {
   bars[3].rect = GRect(halfWidth - BAR_HALF_WIDTH - BAR_PX_LENGTH + 1, halfHeight-BAR_HALF_WIDTH , BAR_PX_LENGTH , BAR_WIDTH);
 
   timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
-  
+}
+
+static void deinit() {
+  window_destroy(window);
+  accel_data_service_unsubscribe();
 }
 
 static void window_unload( Window * window ) {
+  deinit();
   text_layer_destroy( text_layer );
   layer_destroy(main_layer);
 }
@@ -238,12 +223,6 @@ static void init(void) {
 
 }
 
-static void deinit(void) {
-  window_destroy(window);
-  accel_data_service_unsubscribe();
-}
-
-void fill_request_init( uint8_t question_requested ){
-  question_number = question_requested;
+void fill_request_init(){
   init();
 }
