@@ -163,17 +163,15 @@ function send_msg_fail( e ){ console.log(e.error.message);
 }
 
 Pebble.addEventListener("ready", function(e) {
-  console.log(e.ready);
-  console.log("Hello world! - Sent from your javascript application.");
-
   var roomId = localStorage.getItem('room-id');
+
+  console.log("Ready - " roomId);
 
   var fb = new Firebase('https://kirby.firebaseio.com/rooms/' + roomId);
 
   var first = true; // so we don't get one unless it's new
 
   fb.endAt().limit(1).on('child_added', function(snapshot) {
-    console.log("Firebased!");
     if(!first) {
       var data = snapshot.val();
       msg = gen_message(data.question_number, data.answer);
@@ -186,9 +184,8 @@ Pebble.addEventListener("ready", function(e) {
 });
 
 Pebble.addEventListener("appmessage", function(e) {
-  console.log("APP MESSAGE!!!!");
-
   var roomId = localStorage.getItem('room-id');
+  console.log("AppMessage - " roomId);
   var fb = new Firebase('https://kirby.firebaseio.com/rooms/' + roomId );
   var msg = e.payload;
 
