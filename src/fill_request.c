@@ -42,6 +42,10 @@ static void send_response(char answer) {
 
 }
 
+static void popView() {
+  window_stack_pop(true);
+}
+
 static void timer_callback(void *data) { 
 
   AccelData accel = (AccelData) { .x = 0, .y = 0, .z = 0 };
@@ -92,23 +96,19 @@ static void timer_callback(void *data) {
   if (bfill.x >= 50) {
     send_response('B');
     text_layer_set_text(text_layer, "Request\nFilled");
-    psleep(1000);
-    window_stack_pop(true);
+    app_timer_register(2000, popView, NULL);
   } else if (bfill.x <= -50) {
     send_response('D');
     text_layer_set_text(text_layer, "Request\nFilled");
-    psleep(1000);
-    window_stack_pop(true);
+    app_timer_register(2000, popView, NULL);
   } else if (bfill.y >= 50) {
     send_response('A');
     text_layer_set_text(text_layer, "Request\nFilled");
-    psleep(1000);
-    window_stack_pop(true);
+    app_timer_register(2000, popView, NULL);
   } else if (bfill.y <= -50) {
     send_response('C');
     text_layer_set_text(text_layer, "Request\nFilled");
-    psleep(1000);
-    window_stack_pop(true);
+    app_timer_register(2000, popView, NULL);
   } else {
     layer_mark_dirty(main_layer);
     timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
