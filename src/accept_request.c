@@ -24,15 +24,11 @@ typedef struct barfill {
   int y;
 } BarFill;
 
-static void deinit(void);
-
-
 static Window *window;
 static Layer *main_layer;
 static TextLayer *text_layer;
 static AppTimer *timer;
 static Bar bars[NUM_BARS];
-static int count = 0;
 static BarFill bfill;
 
 // globals
@@ -183,9 +179,6 @@ static void init(void) {
 
   bfill.x = 0;
 }
-
-// static void deinit(void) {
-// }
 
 void accept_request_init(){
   init();
