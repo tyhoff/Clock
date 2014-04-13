@@ -45,7 +45,6 @@ static void select_click_handler( ClickRecognizerRef recognizer,
                                   void * context ) {
   // maybe use this for answer summary later
   all_answers_init();
-
 }
 
 static void click_config_provider(void *context) {
