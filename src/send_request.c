@@ -76,7 +76,7 @@ static void incrementTicker(uint8_t amount) {
 }
 
 static void popView() {
-  window_stack_pop(true);
+  window_stack_pop(false);
 }
 
 static void timer_callback(void *data) { 
@@ -256,10 +256,11 @@ static void draw_letters(Layer *window_layer, GRect bounds) {
   text_layer_set_text_alignment(text_layer, GTextAlignmentRight);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
-  ticker_layer = text_layer_create((GRect) { .origin = { 5, 0 }, .size = { 40, 20 } });
+  ticker_layer = text_layer_create((GRect) { .origin = { 5, 0 }, .size = { 55, 20 } });
   snprintf( question_num_text, 10, "Q: %d", question_ticker);
   text_layer_set_text(ticker_layer, question_num_text);
   text_layer_set_text_alignment(ticker_layer, GTextAlignmentLeft);
+  text_layer_set_font(ticker_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   layer_add_child(window_layer, text_layer_get_layer(ticker_layer));
 }
 
