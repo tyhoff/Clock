@@ -150,6 +150,7 @@ H.ServerValue={TIMESTAMP:{".sv":"timestamp"}};H.INTERNAL=Z;H.Context=Y;})();
 
 var last_request_forwarded = null;
 var last_request_accepted = null;
+current_question = null;
 
 function gen_test_message(id){
   return { "question_number": id };
@@ -175,6 +176,7 @@ Pebble.addEventListener("ready", function(e) {
   fb.endAt().limit(1).on('child_added', function(snapshot) {
     console.log("Firebased!");
     if(!first) {
+      current_question = snapshot.name();
       var answers = snapshot.val();
       console.log(answers.question_number);
 
@@ -188,14 +190,22 @@ Pebble.addEventListener("ready", function(e) {
 });
 
 Pebble.addEventListener("appmessage", function(e) {
+  console.log("APP MESSAGE!!!!");
+
+  var roomId = localStorage.getItem('room-id');
+  var fb = new Firebase('https://kirby.firebaseio.com/rooms/' + roomId + '/' + current_question);
   var msg = e.payload;
-  console.log( JSON.stringify(e.payload) );
+
   if ( msg.question_number ){
+    fb.update(msg);
+    console.log("TITTS" + e.payload.question_number);
   } else if ( msg.answer ){
+
   } else {
     console.log("unknown message");
     console.log(msg);
   }
+
 });
 
 Pebble.addEventListener("showConfiguration", function (e) {
