@@ -4,6 +4,7 @@
 static Window *window;
 static TextLayer *text_layer;
 static AppTimer *timer;
+static char answer_text[30];
 
 // globals
 extern int32_t question_number;
@@ -19,13 +20,16 @@ static void window_load( Window * window ) {
   GRect bounds = layer_get_bounds(window_layer);
 
   text_layer = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, bounds.size.h } });
-  text_layer_set_text(text_layer, "FUck Scott and his little friend");
-  text_layer_set_background_color(text_layer, GColorBlack);
-  text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  text_layer_set_text_color(text_layer, GColorWhite);
 
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
+  snprintf( answer_text, 30, "Answer to %ld: %c", question_number, (char) answer );
+
+  text_layer_set_text( text_layer, answer_text );
+  text_layer_set_background_color( text_layer, GColorBlack );
+  text_layer_set_font(text_layer, fonts_get_system_font( FONT_KEY_GOTHIC_14 ));
+  text_layer_set_text_alignment( text_layer, GTextAlignmentCenter );
+  text_layer_set_text_color( text_layer, GColorWhite );
+
+  layer_add_child(window_layer, text_layer_get_layer( text_layer ));
 
   timer = app_timer_register(3000, popView, NULL);
   
