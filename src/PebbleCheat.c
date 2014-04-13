@@ -3,9 +3,6 @@
 
 static Window * window;
 static TextLayer * text_layer;
-static uint8_t answer_request_pending = 0;
-
-static void answer_request_if_needed( uint8_t accepted );
 
 // non statics
 int32_t question_number = 0;
@@ -13,15 +10,11 @@ int32_t answer = 0;
 
 
 void trigger_answer_request_notifier(){
-  // TODO tyler, draw something
-  // then set 5 second timeout, if it expires, make the alert dissappear
-  // and unset answer_request_pending
   accept_request_init();
-  answer_request_pending = 1;
 }
 
 void trigger_answer_pending_notifier(){
-  // TODO tyler, draw something
+  // TODO
   // this is triggered when we recieve confirmation that a teammate has
   // accepted your request and is answering it.
 }
@@ -29,44 +22,18 @@ void trigger_answer_pending_notifier(){
 static void accel_tap_handler( AccelAxisType axis, int32_t direction ) {
   // Process tap on ACCEL_AXIS_X, ACCEL_AXIS_Y or ACCEL_AXIS_Z
   // Direction is 1 or -1
-  //
+  // TRANSITION
+  // tap will enter the send request screen
   send_request_init();
-}
-
-
-static void answer_request_if_needed( uint8_t accepted ){
-
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "accepted state(%d) and pending is %d\n",
-                               accepted,
-                               answer_request_pending );
-  if ( answer_request_pending == 1 ){
-    answer_request_pending = 0;
-    if ( !accepted ){
-      send_msg( question_number, -1 );
-    }
-
-    fill_request_init();
-  }
 }
 
 static void select_click_handler( ClickRecognizerRef recognizer,
                                   void * context ) {
-  //text_layer_set_text(text_layer, "Select");
-  answer_request_if_needed( 1 );
-}
-
-static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Up");
-}
-
-static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Down");
+  // maybe use this for answer summary later
 }
 
 static void click_config_provider(void *context) {
   window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
-  window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
-  window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
 }
 
 static void window_load(Window *window) {
@@ -76,7 +43,7 @@ static void window_load(Window *window) {
   text_layer = text_layer_create((GRect) { .origin = { 0, 72 }, .size = { bounds.size.w, 20 } });
   text_layer_set_text(text_layer, "This is a clock:)");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));  
+  layer_add_child(window_layer, text_layer_get_layer(text_layer));
 }
 
 static void window_unload(Window *window) {
