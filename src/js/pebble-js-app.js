@@ -224,6 +224,8 @@ function parseFireBaseAnswerData(data) {
 
 Pebble.addEventListener("ready", function(e) {
 
+  Firebase.INTERNAL.forceWebSockets();
+
   console.log("Ready begin");
   var roomId = localStorage.getItem('room-id');
 
