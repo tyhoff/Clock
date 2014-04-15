@@ -235,13 +235,20 @@ static void window_load( Window * window ) {
   timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
 }
 
+static void window_appear(Window *window) {
+  accel_data_service_subscribe(0, NULL);
+}
+
+static void window_disappear(Window *window) {
+  accel_data_service_unsubscribe();
+}
+
 static void window_unload( Window * window ) {
   gbitmap_destroy(a_icon);
   gbitmap_destroy(b_icon);
   gbitmap_destroy(c_icon);
   gbitmap_destroy(d_icon);
   window_destroy(window);
-  accel_data_service_unsubscribe();
   text_layer_destroy( text_layer );
   text_layer_destroy(notification_layer);
   text_layer_destroy(ticker_layer);
@@ -253,14 +260,15 @@ void fill_request_init(){
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
     .unload = window_unload,
+    .appear = window_appear,
+    .disappear = window_disappear
   });
   const bool animated = true;
   window_stack_push(window, animated);
 
   bfill.x = 0;
   bfill.y = 0;
-
   accel_data_service_subscribe(0, NULL);
 
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Window - fill_request pushed" );
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Window - fill_request pushed");
 }
