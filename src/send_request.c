@@ -267,7 +267,6 @@ static void draw_letters(Layer *window_layer, GRect bounds) {
 }
 
 static void window_load( Window * window ) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "INSIDE FILL REQUEST\n" );
 
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
@@ -337,7 +336,7 @@ static void window_disappear( Window * window) {
   app_timer_cancel(timer);
 }
 
-static void init(void) {
+void send_request_init() {
   window = window_create();
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
@@ -349,8 +348,6 @@ static void init(void) {
 
   bfill.x = 0;
   bfill.y = 0;
-}
 
-void send_request_init() {
-  init();
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Window - send_request pushed" );
 }

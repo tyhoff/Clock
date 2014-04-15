@@ -15,14 +15,15 @@ enum {
 static void out_sent_handler( DictionaryIterator *sent, 
                             void *context ) {
   // outgoing message was delivered
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "message sent\n" );
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "AppMessage - Message sent" );
 }
 
 static void out_failed_handler( DictionaryIterator * failed,
                                 AppMessageResult reason,
                                 void * context ) {
   // outgoing message failed
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "outbox failure - %s\n", translate_error(reason) );
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "AppMessage - Outbox failure - %s", translate_error(reason) );
+  
   // retry on failure
   app_message_outbox_send();
 }
@@ -30,17 +31,19 @@ static void out_failed_handler( DictionaryIterator * failed,
 static void in_received_handler( DictionaryIterator * received, 
                                  void * context ) {
   // incoming message received
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "MESSAGE RECIEVED\n" );
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "AppMessage - Message received" );
 
+  // check if it is a list of all answers
   Tuple * all_answers_tuple = dict_find( received, ALL_ANSWERS );
   if (all_answers_tuple != NULL) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "MY ARRAY! len: %d\n", all_answers_tuple->length );
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "List of answers array received. len: %d\n", all_answers_tuple->length );
     memcpy(all_answers, all_answers_tuple->value->data, all_answers_tuple->length);
     all_answers_length = all_answers_tuple->length;
     return;
   }
 
-
+  //check if it is a question
+  // TODO - Log this a little more.
 
   Tuple * question_number_tuple = dict_find( received, QUESTION_NUMBER );
   Tuple * answer_tuple          = dict_find( received, ANSWER );
@@ -52,8 +55,8 @@ static void in_received_handler( DictionaryIterator * received,
   if ( answer_tuple != NULL ){
     new_answer = answer_tuple->value->int32;  
   }
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "new_answer has value %ld\n", new_answer );
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "new_question has value %ld\n", new_question );
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "new_answer has value %ld", new_answer );
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "new_question has value %ld", new_question );
 
   if ( new_question > 0 && new_answer > 0 ){
     // this is a ANSWER_BROADCAST
@@ -79,16 +82,17 @@ static void in_received_handler( DictionaryIterator * received,
 
 static void in_dropped_handler( AppMessageResult reason, void * context ) {
   // incoming message dropped
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Dropped incoming message\n" );
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "AppMessage - Dropped incoming message\n" );
 }
 
 void send_msg( int32_t question_number_value, int32_t answer_value){
   DictionaryIterator * outbox_iter;
   if ( app_message_outbox_begin(&outbox_iter) != APP_MSG_OK ){
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "opening outbox failed\n" );
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "AppMessage - Opening outbox failed\n" );
     return;
   }
   if ( outbox_iter == NULL ){
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "AppMessage - Outbox iterator is NULL\n" );
     return;
   }
   if ( question_number_value != -1 ){
@@ -102,7 +106,7 @@ void send_msg( int32_t question_number_value, int32_t answer_value){
                       answer_value );
   }
   if ( dict_write_end( outbox_iter ) == 0 ){
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "the parameters for writing were invalid" );
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "AppMessage - the parameters for writing were invalid" );
   }
   app_message_outbox_send();
 }

@@ -48,7 +48,6 @@ static void timer_callback(void *data) {
   AccelData accel = (AccelData) { .x = 0, .y = 0, .z = 0 };
 
   accel_service_peek(&accel);
-  // Insert UI code here
 
   //ignore
   if (abs(accel.x) < 200 && abs(accel.y) < 200) {
@@ -152,8 +151,6 @@ static void draw_letters(Layer *window_layer, GRect bounds) {
 
 static void window_load( Window * window ) {
   vibes_short_pulse();
-  
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "INSIDE FILL REQUEST\n" );
 
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
@@ -195,11 +192,9 @@ static void window_unload( Window * window ) {
   gbitmap_destroy(x_icon);
   layer_destroy(main_layer);
   accel_data_service_unsubscribe();
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "tyler deinit: %p", window);
 }
 
-static void init(void) {
-
+void accept_request_init(){
   window = window_create();
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
@@ -209,8 +204,6 @@ static void init(void) {
   window_stack_push(window, animated);
 
   bfill.x = 0;
-}
 
-void accept_request_init(){
-  init();
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Window - accept_request pushed");
 }
