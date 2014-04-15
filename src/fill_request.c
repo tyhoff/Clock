@@ -236,17 +236,20 @@ static void window_load( Window * window ) {
   timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
 }
 
-static void deinit() {
+static void window_appear(Window *window) {
+  accel_data_service_subscribe(0, NULL);
+}
+
+static void window_disappear(Window *window) {
+  accel_data_service_unsubscribe();
+}
+
+static void window_unload( Window * window ) {
   gbitmap_destroy(a_icon);
   gbitmap_destroy(b_icon);
   gbitmap_destroy(c_icon);
   gbitmap_destroy(d_icon);
   window_destroy(window);
-  accel_data_service_unsubscribe();
-}
-
-static void window_unload( Window * window ) {
-  deinit();
   text_layer_destroy( text_layer );
   text_layer_destroy(notification_layer);
   text_layer_destroy(ticker_layer);
@@ -254,31 +257,18 @@ static void window_unload( Window * window ) {
 }
 
 static void init(void) {
-
-  /* #<{(| register message handlers  |)}># */
-  /* app_message_register_inbox_received(in_received_handler); */
-  /* app_message_register_inbox_dropped(in_dropped_handler); */
-  /* app_message_register_outbox_sent(out_sent_handler); */
-  /* app_message_register_outbox_failed(out_failed_handler); */
-  /*  */
-  /* #<{(| message handling init |)}># */
-  /* const uint32_t inbound_size = 64; */
-  /* const uint32_t outbound_size = 64; */
-  /* app_message_open(inbound_size, outbound_size); */
-  /*  */
   window = window_create();
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
     .unload = window_unload,
+    .appear = window_appear,
+    .disappear = window_disappear
   });
   const bool animated = true;
   window_stack_push(window, animated);
 
   bfill.x = 0;
   bfill.y = 0;
-
-  accel_data_service_subscribe(0, NULL);
-
 }
 
 void fill_request_init(){
