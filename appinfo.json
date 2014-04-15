@@ -1,8 +1,8 @@
 {
   "uuid": "4cd492ca-2cd0-4d7c-8316-f1ec714db027",
-  "shortName": "PebbleCheat",
-  "longName": "PebbleCheat",
-  "companyName": "MakeAwesomeHappen",
+  "shortName": "Clock",
+  "longName": "Clock",
+  "companyName": "USB",
   "capabilities": [ "configurable" ],
   "versionCode": 1,
   "versionLabel": "1.0.0",
@@ -16,6 +16,12 @@
   },
   "resources": {
     "media": [
+      {
+        "type": "png",
+        "name": "ICON",
+        "file": "images/icon.png",
+        "menuIcon": true
+      },
       {
         "type": "png",
         "name": "CHECK_ICON",

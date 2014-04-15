@@ -149,22 +149,22 @@ H.ServerValue={TIMESTAMP:{".sv":"timestamp"}};H.INTERNAL=Z;H.Context=Y;})();
 // END FIREBASE LIBRARY
 
 function ajax(url, method, data, callback) {
-    var req = new XMLHttpRequest();
-    req.open(method, url, true);
-    req.onload = function(e) {
-        if (req.readyState == 4 && req.status == 200) {
-            if (req.status == 200) {
-                callback(JSON.parse(req.responseText));
-            } else {
-                console.log("HTTP Error: " + JSON.stringify(req));
-            }
-        }
-    };
-    req.send(data);
+  var req = new XMLHttpRequest();
+  req.open(method, url, true);
+  req.onload = function(e) {
+    if (req.readyState == 4 && req.status == 200) {
+      if (req.status == 200) {
+        callback(JSON.parse(req.responseText));
+      } else {
+        console.log("HTTP Error: " + JSON.stringify(req));
+      }
+    }
+  };
+  req.send(data);
 }
 
 function getReq(url, callback) {
-    return ajax(url, 'GET', null, callback);
+  return ajax(url, 'GET', null, callback);
 }
 
 var last_request_forwarded = null;
@@ -279,9 +279,9 @@ Pebble.addEventListener("showConfiguration", function (e) {
   var roomId = localStorage.getItem('room-id');
   var url = "";
   if(roomId && roomId != "") {
-    url = "https://www.cs.purdue.edu/homes/kkohlmor/cheat.html?room-id=" + encodeURIComponent(roomId);
+    url = "http://tyhoffman.com/cheat-config.html?room-id=" + encodeURIComponent(roomId);
   } else {
-    url = "https://www.cs.purdue.edu/homes/kkohlmor/cheat.html";
+    url = "http://tyhoffman.com/cheat-config.html";
   }
   Pebble.openURL(url);
 });

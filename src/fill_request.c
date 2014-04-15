@@ -180,7 +180,6 @@ static void draw_letters(Layer *window_layer, GRect bounds) {
 }
 
 static void window_load( Window * window ) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "INSIDE FILL REQUEST\n" );
 
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
@@ -207,25 +206,25 @@ static void window_load( Window * window ) {
   bars[2].rect = GRect(halfWidth-BAR_HALF_WIDTH , halfHeight + BAR_HALF_WIDTH - 1, BAR_WIDTH , BAR_PX_LENGTH);
   bars[3].rect = GRect(halfWidth - BAR_HALF_WIDTH - BAR_PX_LENGTH + 1, halfHeight-BAR_HALF_WIDTH , BAR_PX_LENGTH , BAR_WIDTH);
 
-  b_icon_layer = bitmap_layer_create(GRect(halfWidth + 43,halfHeight-6,12,12));
-  b_icon = gbitmap_create_with_resource(RESOURCE_ID_B_ICON);
-  bitmap_layer_set_bitmap(b_icon_layer, b_icon);
-  layer_add_child(window_layer, bitmap_layer_get_layer(b_icon_layer));
-
-  d_icon_layer = bitmap_layer_create(GRect(halfWidth - 55,halfHeight-6,12,12));
-  d_icon = gbitmap_create_with_resource(RESOURCE_ID_D_ICON);
-  bitmap_layer_set_bitmap(d_icon_layer, d_icon);
-  layer_add_child(window_layer, bitmap_layer_get_layer(d_icon_layer));
-
   a_icon_layer = bitmap_layer_create(GRect(halfWidth - 6,halfHeight - 55,12,12));
   a_icon = gbitmap_create_with_resource(RESOURCE_ID_A_ICON);
   bitmap_layer_set_bitmap(a_icon_layer, a_icon);
   layer_add_child(window_layer, bitmap_layer_get_layer(a_icon_layer));
 
+  b_icon_layer = bitmap_layer_create(GRect(halfWidth + 43,halfHeight-6,12,12));
+  b_icon = gbitmap_create_with_resource(RESOURCE_ID_B_ICON);
+  bitmap_layer_set_bitmap(b_icon_layer, b_icon);
+  layer_add_child(window_layer, bitmap_layer_get_layer(b_icon_layer));
+
   c_icon_layer = bitmap_layer_create(GRect(halfWidth - 6,halfHeight + 43,12,12));
   c_icon = gbitmap_create_with_resource(RESOURCE_ID_C_ICON);
   bitmap_layer_set_bitmap(c_icon_layer, c_icon);
   layer_add_child(window_layer, bitmap_layer_get_layer(c_icon_layer));
+
+  d_icon_layer = bitmap_layer_create(GRect(halfWidth - 55,halfHeight-6,12,12));
+  d_icon = gbitmap_create_with_resource(RESOURCE_ID_D_ICON);
+  bitmap_layer_set_bitmap(d_icon_layer, d_icon);
+  layer_add_child(window_layer, bitmap_layer_get_layer(d_icon_layer));
 
   notification_layer = text_layer_create((GRect) { .origin = { 10, 20 }, .size = { 124, 60 } });
   text_layer_set_background_color( notification_layer, GColorBlack );
@@ -256,7 +255,7 @@ static void window_unload( Window * window ) {
   layer_destroy(main_layer);
 }
 
-static void init(void) {
+void fill_request_init(){
   window = window_create();
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
@@ -269,8 +268,7 @@ static void init(void) {
 
   bfill.x = 0;
   bfill.y = 0;
-}
+  accel_data_service_subscribe(0, NULL);
 
-void fill_request_init(){
-  init();
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Window - fill_request pushed");
 }

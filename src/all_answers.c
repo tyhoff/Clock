@@ -1,8 +1,6 @@
 #include "pebble.h"
 #include "common.h"
 
-#define NUM_MENU_SECTIONS 1
-
 static Window *window;
 static MenuLayer *menu_layer;
 static char yup[20];
@@ -58,5 +56,6 @@ void all_answers_init(void) {
   });
 
   window_stack_push(window, true);
-  
+
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Window - all_answers pushed" );
 }
