@@ -1,6 +1,7 @@
-
 <!DOCTYPE html>
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,7 +28,7 @@
         function getParameterByName(name) {
           name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
           var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-            results = regex.exec(location.search);
+          results = regex.exec(location.search);
           return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
         }
 
@@ -46,28 +47,6 @@
           });
         });
       </script>
-
-      <!-- <script type="text/javascript"> -->  
-      <!--   var channel; -->
-      <!--   function init() { --> 
-      <!--     channel = document.getElementById("channel"); -->
-      <!--     channel.value=localStorage.getItem("channel"); -->
-      <!--   } -->  
-
-      <!--   function save() { -->
-      <!--     localStorage.setItem("channel",channel.value); -->
-      <!--   } -->
-
-      <!--   function done() { -->
-      <!--     console.log("Hey"); -->
-      <!--     save(); -->
-      <!--     var data=JSON.stringify({code:channel.value.trim()}); -->
-      <!--     window.location.href = "pebblejs://close#"+data; -->
-      <!--   } -->
-
-      <!--   window.addEventListener("load", init, false); -->
-
-      <!-- </script> -->
-</body>
+    </div>
+  </body>
 </html>
-
