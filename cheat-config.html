@@ -32,7 +32,6 @@
         }
 
         $(function() {
-          // var roomId = localStorage.getItem('room-id');
           var roomId = getParameterByName('room-id');
 
           if(roomId) {
@@ -41,33 +40,10 @@
 
           $('#submit-room').click(function(){
             roomId = $('#room-id').val();
-            // console.log(roomId);
             window.location.href = "pebblejs://close#" + roomId;
           });
         });
       </script>
-
-      <!-- <script type="text/javascript"> -->  
-      <!--   var channel; -->
-      <!--   function init() { --> 
-      <!--     channel = document.getElementById("channel"); -->
-      <!--     channel.value=localStorage.getItem("channel"); -->
-      <!--   } -->  
-
-      <!--   function save() { -->
-      <!--     localStorage.setItem("channel",channel.value); -->
-      <!--   } -->
-
-      <!--   function done() { -->
-      <!--     console.log("Hey"); -->
-      <!--     save(); -->
-      <!--     var data=JSON.stringify({code:channel.value.trim()}); -->
-      <!--     window.location.href = "pebblejs://close#"+data; -->
-      <!--   } -->
-
-      <!--   window.addEventListener("load", init, false); -->
-
-      <!-- </script> -->
 </body>
 </html>
 
