@@ -1,0 +1,5 @@
+{
+  "firebase": "kirby",
+  "public": "public",
+  "rules": "config/rules.json"
+}

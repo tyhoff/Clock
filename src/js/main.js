@@ -129,9 +129,9 @@ Pebble.addEventListener("showConfiguration", function (e) {
   var roomId = localStorage.getItem('room-id');
   var url = "";
   if(roomId && roomId !== "") {
-    url = "https://www.cs.purdue.edu/homes/kkohlmor/cheat.html?room-id=" + encodeURIComponent(roomId);
+    url = "https://kirby.firebaseapp.com/clock-config.html?room-id=" + encodeURIComponent(roomId);
   } else {
-    url = "https://www.cs.purdue.edu/homes/kkohlmor/cheat.html";
+    url = "https://kirby.firebaseapp.com/clock-config.html";
   }
   Pebble.openURL(url);
 });
