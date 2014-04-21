@@ -250,8 +250,8 @@ Pebble.addEventListener("ready", function(e) {
   });
   getReq('https://kirby.firebaseio.com/rooms/' + roomId + '/.json', parseFireBaseAnswerData);
 
-  fb.on('value', function(snapshot){
-    var data = snapshot.val();
+  fb.on('value', function (snapshot) {
+    var data = snapshot.val();
     parseFireBaseAnswerData(data);
   });
   console.log("Ready end");
