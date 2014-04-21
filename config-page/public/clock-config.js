@@ -6,14 +6,22 @@ var getParameterByName = function(name) {
 }
 
 $(function() {
-  var roomId = getParameterByName('room-id');
+  var config = localStorage.get_item('config')
+  var roomId = config["room-id"];
 
-  if(roomId && roomId !== "") {
+  if( roomId ) {
     $('#room-id').val(roomId);
   }
 
-  $('#submit-room').click(function(){
+  $('#submit').click(function(){
     roomId = $('#room-id').val();
-    window.location.href = "pebblejs://close#" + roomId;
+    config["room-id"] = roomId;
+
+    config["vib-toggle"] = $('#vib-toggle').is(':checked');
+
+    localStorage.setItem('config', config);
+
+    window.location.href = "pebblejs://close#" +
+                            encodeURIComponent(JSON.stringify(config));
   });
 });
