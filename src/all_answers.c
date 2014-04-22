@@ -1,7 +1,4 @@
-#include "pebble.h"
 #include "common.h"
-
-#define NUM_MENU_SECTIONS 1
 
 static Window *window;
 static MenuLayer *menu_layer;

@@ -61,7 +61,7 @@ static void window_unload( Window * window ) {
 
 }
 
-static void init(void) {
+void receive_answer_init(void) {
   window = window_create();
   window_set_fullscreen(window, true);
   window_set_window_handlers(window, (WindowHandlers) {
@@ -70,8 +70,4 @@ static void init(void) {
   });
   const bool animated = true;
   window_stack_push(window, animated);
-}
-
-void receive_answer_init(){
-  init();
 }

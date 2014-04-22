@@ -1,4 +1,3 @@
-#include <pebble.h>
 #include <pebble_fonts.h>
 #include "common.h"
 
