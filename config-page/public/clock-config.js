@@ -6,13 +6,14 @@ var getParameterByName = function(name) {
 };
 
 $(function() {
-  var config = window.localStorage.getItem('config');
+  var item = window.localStorage.getItem('config');
   var roomId;
+  var config;
 
-  if ( config === null || config.length === 0 ){
+  if ( item === null || item.length === 0 ){
     config = {};
   } else {
-    //config = JSON.parse(config);
+    config = JSON.parse(item);
     if ( config.hasOwnProperty("room-id") ){
       roomId = config['room-id'];
       $('#room-id').val(roomId);
@@ -20,8 +21,6 @@ $(function() {
   }
 
   $('#submit').click(function(){
-
-
     roomId = $('#room-id').val();
     config['room-id'] = roomId;
 
