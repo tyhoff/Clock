@@ -1,27 +1,36 @@
 var getParameterByName = function(name) {
   name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-  var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-    results = regex.exec(location.search);
-  return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
+  var regex = new RegExp( "[\\?&]" + name + "=([^&#]*)"),
+                          results = regex.exec(location.search);
+  return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+};
 
 $(function() {
-  var config = localStorage.get_item('config')
-  var roomId = config["room-id"];
+  var config = window.localStorage.getItem('config');
+  var roomId;
 
-  if( roomId ) {
-    $('#room-id').val(roomId);
+  if ( config === null || config.length === 0 ){
+    config = {};
+  } else {
+    //config = JSON.parse(config);
+    if ( config.hasOwnProperty("room-id") ){
+      roomId = config['room-id'];
+      $('#room-id').val(roomId);
+    }
   }
 
   $('#submit').click(function(){
+
+
     roomId = $('#room-id').val();
-    config["room-id"] = roomId;
+    config['room-id'] = roomId;
 
-    config["vib-toggle"] = $('#vib-toggle').is(':checked');
+    config['vib-toggle'] = $('#vib-toggle').is(':checked');
 
-    localStorage.setItem('config', config);
+    window.localStorage.setItem('config', config);
 
-    window.location.href = "pebblejs://close#" +
-                            encodeURIComponent(JSON.stringify(config));
+    var js_conf = JSON.stringify(config);
+    console.log( js_conf );
+    window.location.href = "pebblejs://close#" + encodeURIComponent( js_conf );
   });
 });

@@ -78,7 +78,7 @@ Pebble.addEventListener("ready", function(e) {
   Firebase.INTERNAL.forceWebSockets();
 
   console.log("Ready begin");
-  config = localStorage.getItem('config');
+  config = window.localStorage.getItem('config');
   var roomId = config["room-id"];
 
   console.log("Ready - " + roomId);
@@ -128,7 +128,7 @@ Pebble.addEventListener("appmessage", function(e) {
 });
 
 Pebble.addEventListener("showConfiguration", function (e) {
-  var url = "https://www.cs.purdue.edu/homes/sopell/cheat-config.html";
+  var url = "https://www.cs.purdue.edu/homes/sopell/clock-config.html";
   Pebble.openURL(url);
 });
 
@@ -142,5 +142,5 @@ Pebble.addEventListener("webviewclosed", function (e) {
   console.log("room id is " + config["room-id"] );
   console.log("vibration status is " + config["vib-toggle"] );
 
-  localStorage.setItem( 'config', config );
+  window.localStorage.setItem( 'config', config );
 });
