@@ -22,6 +22,8 @@ $(function() {
     if ( config.hasOwnProperty("vib-status") ){
       vibStatus = config['vib-status'];
       $('#vib-toggle').prop('checked', vibStatus );
+    } else {
+      vibStatus = false;
     }
   }
 

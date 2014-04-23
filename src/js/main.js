@@ -20,6 +20,7 @@ function getReq(url, callback) {
 var bytearray;
 var last_sent_time = 0;
 var config;
+var roomId;
 
 function gen_message(question_number, answer){
   return { "question_number": question_number, "answer": answer };
@@ -73,13 +74,24 @@ function parseFireBaseAnswerData(data) {
   Pebble.sendAppMessage({"2":bytearray});
 }
 
+var getAndSetRoomId = function() {
+  console.log("Ready begin");
+  config = window.localStorage.getItem('config');
+  if(config) {
+    var roomId = config["room-id"];
+  } else {
+    Pebble.showSimpleNotificationOnPebble("Woah there!",
+                                          "Set the room inside of Clock on your phone.");
+  }
+}
+
 Pebble.addEventListener("ready", function(e) {
 
   Firebase.INTERNAL.forceWebSockets();
 
-  console.log("Ready begin");
-  config = window.localStorage.getItem('config');
-  var roomId = config["room-id"];
+  // localStorage.removeItem('config');
+
+  getAndSetRoomId();
 
   console.log("Ready - " + roomId);
 
@@ -143,4 +155,5 @@ Pebble.addEventListener("webviewclosed", function (e) {
   console.log("vibration status is " + config["vib-toggle"] );
 
   window.localStorage.setItem( 'config', config );
+  getAndSetRoomId();
 });
