@@ -203,7 +203,7 @@ static void window_unload( Window * window ) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "tyler deinit: %p", window);
 }
 
-static void init(void) {
+void accept_request_init(void) {
 
   window = window_create();
   window_set_window_handlers(window, (WindowHandlers) {
@@ -216,8 +216,4 @@ static void init(void) {
   window_stack_push(window, animated);
 
   bfill.x = 0;
-}
-
-void accept_request_init(){
-  init();
 }

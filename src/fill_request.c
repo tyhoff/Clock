@@ -1,4 +1,3 @@
-#include <pebble.h>
 #include "common.h"
 
 #define NUM_BARS 4
@@ -207,25 +206,25 @@ static void window_load( Window * window ) {
   bars[2].rect = GRect(halfWidth-BAR_HALF_WIDTH , halfHeight + BAR_HALF_WIDTH - 1, BAR_WIDTH , BAR_PX_LENGTH);
   bars[3].rect = GRect(halfWidth - BAR_HALF_WIDTH - BAR_PX_LENGTH + 1, halfHeight-BAR_HALF_WIDTH , BAR_PX_LENGTH , BAR_WIDTH);
 
-  b_icon_layer = bitmap_layer_create(GRect(halfWidth + 43,halfHeight-6,12,12));
-  b_icon = gbitmap_create_with_resource(RESOURCE_ID_B_ICON);
-  bitmap_layer_set_bitmap(b_icon_layer, b_icon);
-  layer_add_child(window_layer, bitmap_layer_get_layer(b_icon_layer));
-
-  d_icon_layer = bitmap_layer_create(GRect(halfWidth - 55,halfHeight-6,12,12));
-  d_icon = gbitmap_create_with_resource(RESOURCE_ID_D_ICON);
-  bitmap_layer_set_bitmap(d_icon_layer, d_icon);
-  layer_add_child(window_layer, bitmap_layer_get_layer(d_icon_layer));
-
   a_icon_layer = bitmap_layer_create(GRect(halfWidth - 6,halfHeight - 55,12,12));
   a_icon = gbitmap_create_with_resource(RESOURCE_ID_A_ICON);
   bitmap_layer_set_bitmap(a_icon_layer, a_icon);
   layer_add_child(window_layer, bitmap_layer_get_layer(a_icon_layer));
 
+  b_icon_layer = bitmap_layer_create(GRect(halfWidth + 43,halfHeight-6,12,12));
+  b_icon = gbitmap_create_with_resource(RESOURCE_ID_B_ICON);
+  bitmap_layer_set_bitmap(b_icon_layer, b_icon);
+  layer_add_child(window_layer, bitmap_layer_get_layer(b_icon_layer));
+
   c_icon_layer = bitmap_layer_create(GRect(halfWidth - 6,halfHeight + 43,12,12));
   c_icon = gbitmap_create_with_resource(RESOURCE_ID_C_ICON);
   bitmap_layer_set_bitmap(c_icon_layer, c_icon);
   layer_add_child(window_layer, bitmap_layer_get_layer(c_icon_layer));
+
+  d_icon_layer = bitmap_layer_create(GRect(halfWidth - 55,halfHeight-6,12,12));
+  d_icon = gbitmap_create_with_resource(RESOURCE_ID_D_ICON);
+  bitmap_layer_set_bitmap(d_icon_layer, d_icon);
+  layer_add_child(window_layer, bitmap_layer_get_layer(d_icon_layer));
 
   notification_layer = text_layer_create((GRect) { .origin = { 10, 20 }, .size = { 124, 60 } });
   text_layer_set_background_color( notification_layer, GColorBlack );
@@ -233,15 +232,16 @@ static void window_load( Window * window ) {
   text_layer_set_font(notification_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   text_layer_set_text_color( notification_layer, GColorWhite );
 
-  timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
 }
 
 static void window_appear(Window *window) {
   accel_data_service_subscribe(0, NULL);
+  timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
 }
 
 static void window_disappear(Window *window) {
   accel_data_service_unsubscribe();
+  app_timer_cancel(timer);
 }
 
 static void window_unload( Window * window ) {
@@ -249,14 +249,18 @@ static void window_unload( Window * window ) {
   gbitmap_destroy(b_icon);
   gbitmap_destroy(c_icon);
   gbitmap_destroy(d_icon);
-  window_destroy(window);
+  bitmap_layer_destroy(a_icon_layer);
+  bitmap_layer_destroy(b_icon_layer);
+  bitmap_layer_destroy(c_icon_layer);
+  bitmap_layer_destroy(d_icon_layer);
   text_layer_destroy( text_layer );
   text_layer_destroy(notification_layer);
   text_layer_destroy(ticker_layer);
   layer_destroy(main_layer);
+  window_destroy(window);
 }
 
-static void init(void) {
+void fill_request_init(void) {
   window = window_create();
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
@@ -269,8 +273,4 @@ static void init(void) {
 
   bfill.x = 0;
   bfill.y = 0;
-}
-
-void fill_request_init(){
-  init();
 }
