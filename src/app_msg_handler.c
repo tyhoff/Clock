@@ -12,7 +12,7 @@ enum {
   ALL_ANSWERS       = 0x2
 };
 
-static void out_sent_handler( DictionaryIterator *sent, 
+static void out_sent_handler( DictionaryIterator *sent,
                             void *context ) {
   // outgoing message was delivered
   APP_LOG(APP_LOG_LEVEL_DEBUG, "message sent\n" );
@@ -27,7 +27,7 @@ static void out_failed_handler( DictionaryIterator * failed,
   app_message_outbox_send();
 }
 
-static void in_received_handler( DictionaryIterator * received, 
+static void in_received_handler( DictionaryIterator * received,
                                  void * context ) {
   // incoming message received
   APP_LOG(APP_LOG_LEVEL_DEBUG, "MESSAGE RECIEVED\n" );
@@ -41,16 +41,15 @@ static void in_received_handler( DictionaryIterator * received,
   }
 
 
-
   Tuple * question_number_tuple = dict_find( received, QUESTION_NUMBER );
   Tuple * answer_tuple          = dict_find( received, ANSWER );
   int32_t new_question = 0;
   int32_t new_answer = 0;
   if ( question_number_tuple != NULL ){
-    new_question = question_number_tuple->value->int32;  
+    new_question = question_number_tuple->value->int32;
   }
   if ( answer_tuple != NULL ){
-    new_answer = answer_tuple->value->int32;  
+    new_answer = answer_tuple->value->int32;
   }
   APP_LOG(APP_LOG_LEVEL_DEBUG, "new_answer has value %ld\n", new_answer );
   APP_LOG(APP_LOG_LEVEL_DEBUG, "new_question has value %ld\n", new_question );

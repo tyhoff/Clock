@@ -19,6 +19,7 @@ function getReq(url, callback) {
 
 var bytearray;
 var last_sent_time = 0;
+var config;
 
 function gen_message(question_number, answer){
   return { "question_number": question_number, "answer": answer };
@@ -34,7 +35,7 @@ function send_msg_fail( e ){
 
 function parseFireBaseAnswerData(data) {
   var table = [];
-  bytearray = [];
+  var bytearray = [];
 
   for (var key in data) {
     var response = data[key];
@@ -55,7 +56,7 @@ function parseFireBaseAnswerData(data) {
     }
   }
 
-  for (var i=0; i<table.length; i++) {
+  for (var i = 0; i < table.length; i++) {
     var list = table[i];
     if (list === undefined) {
       continue;
@@ -63,7 +64,7 @@ function parseFireBaseAnswerData(data) {
 
     console.log(list);
 
-    for (var j=0; j<list.length; j++) {
+    for (var j = 0; j < list.length; j++) {
       bytearray.push(i);
       bytearray.push(list[j]);
     }
@@ -77,7 +78,8 @@ Pebble.addEventListener("ready", function(e) {
   Firebase.INTERNAL.forceWebSockets();
 
   console.log("Ready begin");
-  var roomId = localStorage.getItem('room-id');
+  config = window.localStorage.getItem('config');
+  var roomId = config["room-id"];
 
   console.log("Ready - " + roomId);
 
@@ -108,7 +110,7 @@ Pebble.addEventListener("ready", function(e) {
 });
 
 Pebble.addEventListener("appmessage", function(e) {
-  var roomId = localStorage.getItem('room-id');
+  var roomId = config['room-id'];
   console.log("AppMessage - " + roomId);
   var fb = new Firebase('https://kirby.firebaseio.com/rooms/' + roomId );
   var msg = e.payload;
@@ -126,23 +128,19 @@ Pebble.addEventListener("appmessage", function(e) {
 });
 
 Pebble.addEventListener("showConfiguration", function (e) {
-  var roomId = localStorage.getItem('room-id');
-  var url = "";
-  if(roomId && roomId !== "") {
-    url = "https://kirby.firebaseapp.com/clock-config.html?room-id=" + encodeURIComponent(roomId);
-  } else {
-    url = "https://kirby.firebaseapp.com/clock-config.html";
-  }
+  var url = "https://www.cs.purdue.edu/homes/sopell/clock-config.html";
   Pebble.openURL(url);
 });
 
 Pebble.addEventListener("webviewclosed", function (e) {
-  console.log("The room is " + e.response);
-
   if (!e.response){
     return;
   }
-  var roomId = e.response;
+  var json = decodeURIComponent( e.response );
+  config = JSON.parse( json );
 
-  localStorage.setItem('room-id', roomId);
+  console.log("room id is " + config["room-id"] );
+  console.log("vibration status is " + config["vib-toggle"] );
+
+  window.localStorage.setItem( 'config', config );
 });

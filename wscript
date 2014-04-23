@@ -30,8 +30,7 @@ def build(ctx):
     src_js.append(src_js_main)
     # get destination path for joined file (it will be in build/src/js/)
     build_js = ctx.path.get_bld().make_node('src/js/pebble-js-app.js')
-    # check syntax (jshint) and minify (uglifyjs); stop build process on failure
-    ctx(rule='(echo ${SRC}; uglifyjs ${SRC} -o ${TGT})',
-        source=src_js, target=build_js)
+    # check minify (uglifyjs)
+    ctx(rule='(echo ${SRC}; env | grep "P_DEV" && cat ${SRC} > ${TGT} || uglifyjs ${SRC} -o ${TGT} )', source=src_js, target=build_js)
 
     ctx.pbl_bundle(elf='pebble-app.elf', js=build_js)

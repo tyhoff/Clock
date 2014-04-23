@@ -1,0 +1,3 @@
+#!/bin/sh
+
+P_DEV=true pebble build
