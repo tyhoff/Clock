@@ -76,9 +76,8 @@ function parseFireBaseAnswerData(data) {
 var getAndSetRoomId = function(callback) {
   console.log("Ready begin");
   var config_str = window.localStorage.getItem('config');
-  console.log( config_str );
-  config = JSON.parse( config_str );
-  if(config) {
+  if(config_str) {
+    config = JSON.parse( config_str );
     var roomId = config["room-id"];
     console.log(JSON.stringify(config));
     console.log(typeof config);
@@ -119,6 +118,7 @@ var fireOn = function(roomId) {
 }
 
 Pebble.addEventListener("ready", function(e) {
+  // localStorage.removeItem('config');
   getAndSetRoomId(fireOn);
 });
 
