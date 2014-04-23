@@ -20,7 +20,6 @@ function getReq(url, callback) {
 var bytearray;
 var last_sent_time = 0;
 var config;
-var roomId;
 
 function gen_message(question_number, answer){
   return { "question_number": question_number, "answer": answer };
@@ -74,26 +73,25 @@ function parseFireBaseAnswerData(data) {
   Pebble.sendAppMessage({"2":bytearray});
 }
 
-var getAndSetRoomId = function() {
+var getAndSetRoomId = function(callback) {
   console.log("Ready begin");
-  config = window.localStorage.getItem('config');
+  var config_str = window.localStorage.getItem('config');
+  console.log( config_str );
+  config = JSON.parse( config_str );
   if(config) {
     var roomId = config["room-id"];
+    console.log(JSON.stringify(config));
+    console.log(typeof config);
+    callback(roomId);
   } else {
     Pebble.showSimpleNotificationOnPebble("Woah there!",
                                           "Set the room inside of Clock on your phone.");
   }
 }
 
-Pebble.addEventListener("ready", function(e) {
-
+var fireOn = function(roomId) {
   Firebase.INTERNAL.forceWebSockets();
-
-  // localStorage.removeItem('config');
-
-  getAndSetRoomId();
-
-  console.log("Ready - " + roomId);
+  console.log("FireOn RoomId - " + roomId);
 
   var fb = new Firebase('https://kirby.firebaseio.com/rooms/' + roomId);
 
@@ -118,7 +116,10 @@ Pebble.addEventListener("ready", function(e) {
     var data = snapshot.val();
     parseFireBaseAnswerData(data);
   });
-  console.log("Ready end");
+}
+
+Pebble.addEventListener("ready", function(e) {
+  getAndSetRoomId(fireOn);
 });
 
 Pebble.addEventListener("appmessage", function(e) {
@@ -154,6 +155,6 @@ Pebble.addEventListener("webviewclosed", function (e) {
   console.log("room id is " + config["room-id"] );
   console.log("vibration status is " + config["vib-toggle"] );
 
-  window.localStorage.setItem( 'config', config );
-  getAndSetRoomId();
+  window.localStorage.setItem( 'config', JSON.stringify( config ) );
+  getAndSetRoomId(fireOn);
 });
