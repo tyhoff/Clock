@@ -79,6 +79,7 @@ static void window_load( Window * window ) {
 
 static void window_unload( Window * window ) {
   text_layer_destroy( text_layer );
+  window_destroy(window);
 }
 
 static void window_appear(Window *window) {
@@ -108,7 +109,7 @@ static void init(void) {
 }
 
 static void deinit(void) {
-  window_destroy(window);
+  
 }
 
 int main(void) {

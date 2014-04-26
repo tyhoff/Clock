@@ -245,15 +245,23 @@ static void window_disappear(Window *window) {
 }
 
 static void window_unload( Window * window ) {
+  bitmap_layer_destroy(a_icon_layer);
+  bitmap_layer_destroy(b_icon_layer);
+  bitmap_layer_destroy(c_icon_layer);
+  bitmap_layer_destroy(d_icon_layer);
+
   gbitmap_destroy(a_icon);
   gbitmap_destroy(b_icon);
   gbitmap_destroy(c_icon);
   gbitmap_destroy(d_icon);
-  window_destroy(window);
+
   text_layer_destroy( text_layer );
   text_layer_destroy(notification_layer);
   text_layer_destroy(ticker_layer);
+
   layer_destroy(main_layer);
+
+  window_destroy(window);
 }
 
 static void init(void) {

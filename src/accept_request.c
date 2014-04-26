@@ -196,11 +196,15 @@ static void window_disappear(Window *window) {
 }
 
 static void window_unload( Window * window ) {
-  // text_layer_destroy( text_layer );
+  text_layer_destroy(text_layer);
+
+  bitmap_layer_destroy(check_icon_layer);
+  bitmap_layer_destroy(x_icon_layer);
+
   gbitmap_destroy(check_icon);
   gbitmap_destroy(x_icon);
+
   layer_destroy(main_layer);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "tyler deinit: %p", window);
 }
 
 static void init(void) {
