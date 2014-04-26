@@ -27,6 +27,6 @@ void accel_bar_layer_set_range(AccelBarLayer* bar, int32_t min, int32_t max);
 void accel_bar_layer_set_value(AccelBarLayer* bar, int32_t value);
 void accel_bar_layer_set_frame_color(AccelBarLayer* bar, GColor color);
 void accel_bar_layer_set_bar_color(AccelBarLayer* bar, GColor color);
-void accel_bar_layer_set_orientation(AccelBarLayer* bar, AccelBarDirection direction);
+void accel_bar_layer_set_direction(AccelBarLayer* bar, AccelBarDirection direction);
 
 #endif

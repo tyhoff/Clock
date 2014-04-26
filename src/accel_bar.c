@@ -70,6 +70,7 @@ static void accel_bar_layer_update(AccelBarLayer *bar, GContext *ctx) {
     bounds.size.h = ((data->value - data->min) * bounds.size.h) / (data->max - data->min);
   } else if (data->direction == AccelBarDirectionLeft) {
     bounds.size.w = ((data->value - data->min) * bounds.size.w) / (data->max - data->min);
+    // bounds.origin.x = bounds.origin.x - bounds.size.w;
   }
 
   graphics_context_set_fill_color(ctx, data->bar_color);

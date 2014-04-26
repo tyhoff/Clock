@@ -1,6 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 #include <pebble.h>
+#include "accel_bar.h"
 
 // global functions
 void fill_request_init( void );
