@@ -16,5 +16,6 @@ char *itoa(int num);
 
 void accept_request_init();
 void send_request_init();
+void test_bar_init(void);
 
 #endif
