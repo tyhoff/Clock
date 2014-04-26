@@ -313,8 +313,6 @@ static void window_load( Window * window ) {
   text_layer_set_text_color( notification_layer, GColorWhite );
 
   question_ticker = 1;
-
-  timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL); 
 }
 
 static void window_unload( Window * window ) {
@@ -332,6 +330,7 @@ static void window_unload( Window * window ) {
 
 static void window_appear( Window * window) {
   accel_data_service_subscribe(0, NULL);
+  timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL); 
 }
 
 static void window_disappear( Window * window) {
