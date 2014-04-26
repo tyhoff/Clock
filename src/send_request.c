@@ -339,7 +339,7 @@ static void window_disappear( Window * window) {
   app_timer_cancel(timer);
 }
 
-static void init(void) {
+void send_request_init(void) {
   window = window_create();
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
@@ -352,8 +352,4 @@ static void init(void) {
 
   bfill.x = 0;
   bfill.y = 0;
-}
-
-void send_request_init() {
-  init();
 }
