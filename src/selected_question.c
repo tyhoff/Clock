@@ -6,22 +6,16 @@ static MenuLayer *menu_layer;
 extern uint8_t all_answers[120];
 extern uint8_t all_answers_length;
 
-// Each section has a number of items;  we use a callback to specify this
-// You can also dynamically add and remove items using this
+// There will always be 4 rows A, B, C, D
 static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
-  return all_answers_length/2;
+  return 4;
 }
 
 // This is the menu item draw callback where you specify what each item should look like
 static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
   /* snprintf(yup, 2, "%c", all_answers[cell_index->row*2+1]); */
-  menu_cell_basic_draw(ctx, cell_layer, itoa(all_answers[cell_index->row*2]), NULL, NULL);
-}
-
-static void select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
-  const int index = cell_index->row;
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Go to this question!!! %d", index);
-  selected_question_init();
+  /* menu_cell_basic_draw(ctx, cell_layer, itoa(all_answers[cell_index->row*2]), yup, NULL); */
+  menu_cell_basic_draw(ctx, cell_layer, "A", "B", NULL);
 }
 
 // This initializes the menu upon window load
@@ -36,7 +30,6 @@ static void window_load(Window *window) {
   menu_layer_set_callbacks(menu_layer, NULL, (MenuLayerCallbacks){
     .get_num_rows = menu_get_num_rows_callback,
     .draw_row = menu_draw_row_callback,
-    .select_click = (MenuLayerSelectCallback) select_callback
   });
 
   // Bind the menu layer's click config provider to the window for interactivity
@@ -52,7 +45,7 @@ static void window_unload(Window *window) {
   window_destroy(window);
 }
 
-void all_answers_init(void) {
+void selected_question_init(void) {
   window = window_create();
 
   // Setup the window handlers
