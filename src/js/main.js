@@ -39,22 +39,11 @@ function parseFireBaseAnswerData(data) {
 
   for (var key in data) {
     var response = data[key];
-
-    if (table[response.question_number] === undefined) {
-      table[response.question_number] = [];
+    if ( response.question_number === undefined
+         || response.question_number === ''
+         && response.response !== 0){
+        table[response.question_number][response.answer - 65]++
     }
-    if (response.answer !== 0) {
-      table[response.question_number].push(response.answer);
-    }
-  }
-
-  for (var key in data) {
-    var response = data[key];
-    if (table[response.question_number] !== undefined &&
-        table[response.question_number].length === 0) {
-      delete(table[response.question_number]);
-    }
-  }
 
   for (var i = 0; i < table.length; i++) {
     var list = table[i];
