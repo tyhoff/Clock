@@ -55,5 +55,4 @@ void all_answers_init(void) {
   });
 
   window_stack_push(window, true);
-  
 }

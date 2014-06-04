@@ -118,7 +118,6 @@ var fireOn = function(roomId) {
 }
 
 Pebble.addEventListener("ready", function(e) {
-  // localStorage.removeItem('config');
   getAndSetRoomId(fireOn);
 });
 
@@ -141,7 +140,7 @@ Pebble.addEventListener("appmessage", function(e) {
 });
 
 Pebble.addEventListener("showConfiguration", function (e) {
-  var url = "https://www.cs.purdue.edu/homes/sopell/clock-config.html";
+  var url = "https://kirby.firebaseapp.com/clock-config.html";
   Pebble.openURL(url);
 });
 

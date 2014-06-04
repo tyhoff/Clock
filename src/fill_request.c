@@ -58,14 +58,14 @@ static void popView() {
 
 static void send_response(char answer) {
   text_layer_set_text(notification_layer, "Answer\nSent");
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(notification_layer)); 
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(notification_layer));
   app_timer_register(2000, popView, NULL);
 
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Request filled for Q: %u with answer %c", (int)question_number, (int)answer);
   send_msg( question_number, (int32_t) answer );
 }
 
-static void timer_callback(void *data) { 
+static void timer_callback(void *data) {
 
   AccelData accel = (AccelData) { .x = 0, .y = 0, .z = 0 };
 
@@ -89,15 +89,15 @@ static void timer_callback(void *data) {
         bfill.y = 0;
 
 
-        //left 
+        //left
       } else {
         bfill.x -= INCREASE_RATE;
         bfill.y = 0;
- 
+
       }
     } else {
 
-      // up 
+      // up
       if (accel.y >= 0) {
         bfill.y += INCREASE_RATE;
         bfill.x = 0;
@@ -123,7 +123,7 @@ static void timer_callback(void *data) {
   } else {
     layer_mark_dirty(main_layer);
     timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
-  }  
+  }
 }
 
 static void main_layer_update_callback(Layer *me, GContext *ctx) {
