@@ -39,11 +39,24 @@ function parseFireBaseAnswerData(data) {
 
   for (var key in data) {
     var response = data[key];
-    if ( response.question_number === undefined
-         || response.question_number === ''
-         && response.response !== 0){
-        table[response.question_number][response.answer - 65]++
+
+    if (table[response.question_number] === undefined) {
+      table[response.question_number] = [];
     }
+    if (response.answer !== 0) {
+      table[response.question_number].push(response.answer);
+    }
+  }
+
+  for (var key in data) {
+    var response = data[key];
+    if (table[response.question_number] !== undefined &&
+        table[response.question_number].length === 0) {
+      delete(table[response.question_number]);
+    }
+  }
+
+  var compact_table = [];
 
   for (var i = 0; i < table.length; i++) {
     var list = table[i];
@@ -51,11 +64,38 @@ function parseFireBaseAnswerData(data) {
       continue;
     }
 
-    console.log(list);
+    console.log(" list(length "+list.length+") at index "+ i + " contains ");
 
     for (var j = 0; j < list.length; j++) {
+      if (compact_table[i] === undefined){
+        compact_table[i] = new Array(4);
+        for (var k = 0; k < 4; k++){
+          compact_table[i][k] = 0;
+        }
+      }
+      var normalized_index = list[j] - 65;
+      compact_table[i][normalized_index] += 1;
+    }
+  }
+
+  for (var i = 0; i < compact_table.length; i++){
+    if (compact_table[i] === undefined ){
+      continue;
+    }
+    // check if any of the options A(0), B(1).. have data
+    hasAnswers = false;
+    for (var j = 0; j < 4; j++){
+      if (compact_table[i][j] > 0 ){
+        hasAnswers = true;
+        break;
+      }
+    }
+    if (hasAnswers){
+      // only if this number has answers will we push it onto the array
       bytearray.push(i);
-      bytearray.push(list[j]);
+      for (var j = 0; j < 4; j++){
+        bytearray.push(compact_table[i][j]);
+      }
     }
   }
 
