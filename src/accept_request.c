@@ -183,16 +183,18 @@ static void window_load( Window * window ) {
   bitmap_layer_set_bitmap(x_icon_layer, x_icon);
   layer_add_child(window_layer, bitmap_layer_get_layer(x_icon_layer));
 
-  timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
+  
   
 }
 
 static void window_appear(Window *window) {
   accel_data_service_subscribe(0, NULL);
+  timer = app_timer_register(ACCEL_STEP_MS, timer_callback, NULL);
 }
 
 static void window_disappear(Window *window) {
   accel_data_service_unsubscribe();
+  app_timer_cancel(timer);
 }
 
 static void window_unload( Window * window ) {
@@ -200,7 +202,6 @@ static void window_unload( Window * window ) {
   gbitmap_destroy(check_icon);
   gbitmap_destroy(x_icon);
   layer_destroy(main_layer);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "tyler deinit: %p", window);
 }
 
 void accept_request_init(void) {

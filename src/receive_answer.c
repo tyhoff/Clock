@@ -53,12 +53,19 @@ static void window_load( Window * window ) {
   layer_add_child(window_layer, text_layer_get_layer( text_question ));
 
 
-  timer = app_timer_register(3000, popView, NULL);
   
 }
 
 static void window_unload( Window * window ) {
 
+}
+
+static void window_appear( Window * window ) {
+  timer = app_timer_register(3000, popView, NULL);
+}
+
+static void window_disappear( Window * window ) {
+  app_timer_cancel(timer);
 }
 
 void receive_answer_init(void) {
@@ -67,6 +74,8 @@ void receive_answer_init(void) {
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
     .unload = window_unload,
+    .appear = window_appear,
+    .disappear = window_disappear
   });
   const bool animated = true;
   window_stack_push(window, animated);

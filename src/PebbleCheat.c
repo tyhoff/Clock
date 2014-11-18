@@ -72,8 +72,6 @@ static void window_load( Window * window ) {
   text_layer_set_text_color( text_layer, GColorWhite );
 
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
-
-  timer = app_timer_register(1000, listenForTaps, NULL);
 }
 
 static void window_unload( Window * window ) {
@@ -82,10 +80,12 @@ static void window_unload( Window * window ) {
 
 static void window_appear(Window *window) {
   accel_tap_service_subscribe(&accel_tap_handler);
+  timer = app_timer_register(1000, listenForTaps, NULL);
 }
 
 static void window_disappear(Window *window) {
   accel_tap_service_unsubscribe();
+  app_timer_cancel(timer);
 }
 
 static void init(void) {
