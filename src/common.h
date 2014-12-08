@@ -1,6 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 #include <pebble.h>
+#include "accel_bar.h"
 
 // global functions
 void fill_request_init( void );
@@ -15,5 +16,6 @@ char *itoa(int num);
 
 void accept_request_init();
 void send_request_init();
+void test_bar_init(void);
 
 #endif
